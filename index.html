@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Best T — Custom Polyphonic Synthesizer</title>
-  <!-- Custom Expressive Fonts for Hardware Badging -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Mr+Dafoe&family=Orbitron:wght@800;900&family=Plus+Jakarta+Sans:wght@500;700&family=Space+Mono:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <style>
-    /* 1. FURRY NORTH SKIN: Chippy & Chipette (Snowy Pine Forest, Warm Fur & Rose-Gold Script) */
+    /* 1. FURRY NORTH SKIN: Chippy & Chipette */
     :root, body[data-skin="furrynorth"] {
       --bg-gradient: radial-gradient(circle at 50% 20%, #243b39 0%, #0d1717 100%);
       --chassis: #4c3024;
@@ -27,7 +28,6 @@
       --key-white: #fffcf7;
       --key-white-active: linear-gradient(to bottom, #fae8ff 0%, #e4a9f0 100%);
       --key-black: #261610;
-      /* Emblem Styling */
       --logo-font: 'Mr Dafoe', cursive;
       --logo-size: 3.1rem;
       --logo-fill: linear-gradient(180deg, #ffffff 0%, #ffe3d1 35%, #ff9a62 70%, #e86dff 100%);
@@ -54,7 +54,6 @@
       --key-white: #f8f6fc;
       --key-white-active: linear-gradient(to bottom, #ffd9ea 0%, #ff85bc 100%);
       --key-black: #171520;
-      /* Emblem Styling */
       --logo-font: 'Mr Dafoe', cursive;
       --logo-size: 3.2rem;
       --logo-fill: linear-gradient(180deg, #ffffff 0%, #ff9ec7 35%, #ff2a85 75%, #00f2fe 100%);
@@ -63,7 +62,7 @@
       --logo-spacing: 2px;
     }
 
-    /* 3. VINTAGE ANALOG SKIN (Brushed Brass & Walnut) */
+    /* 3. VINTAGE ANALOG SKIN */
     body[data-skin="vintage"] {
       --bg-gradient: radial-gradient(circle at center, #2c221e 0%, #120d0b 100%);
       --chassis: #221e1b;
@@ -81,7 +80,6 @@
       --key-white: #f4ebd9;
       --key-white-active: linear-gradient(to bottom, #ffe8b8 0%, #ffc966 100%);
       --key-black: #1c1815;
-      /* Emblem Styling */
       --logo-font: 'Cinzel Decorative', serif;
       --logo-size: 2.35rem;
       --logo-fill: linear-gradient(180deg, #fff6d6 0%, #ffd269 40%, #c98312 75%, #f5c156 100%);
@@ -90,7 +88,7 @@
       --logo-spacing: 3px;
     }
 
-    /* 4. MINIMALIST STUDIO SKIN (Teenage Engineering Style) */
+    /* 4. MINIMALIST STUDIO SKIN */
     body[data-skin="minimal"] {
       --bg-gradient: radial-gradient(circle at center, #eaedf2 0%, #cdd3dc 100%);
       --chassis: #f3f4f7;
@@ -108,7 +106,6 @@
       --key-white: #ffffff;
       --key-white-active: linear-gradient(to bottom, #ffd8c4 0%, #ff9d6b 100%);
       --key-black: #282b33;
-      /* Emblem Styling */
       --logo-font: 'Orbitron', sans-serif;
       --logo-size: 2.1rem;
       --logo-fill: linear-gradient(135deg, #ff5100 0%, #ff2200 60%, #1c1f26 100%);
@@ -127,6 +124,7 @@
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
       background: var(--bg-gradient);
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text);
@@ -137,6 +135,81 @@
       transition: background 0.4s ease, color 0.25s ease;
       overflow-x: hidden;
       position: relative;
+    }
+
+    /* ====================================================
+       PORTRAIT BLOCKER OVERLAY (Forces Landscape on Phone)
+       ==================================================== */
+    .rotate-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: radial-gradient(circle at center, #2b1d28 0%, #0e0b12 100%);
+      color: #fdf6f0;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 32px;
+      gap: 18px;
+    }
+
+    .rotate-phone-icon {
+      width: 68px;
+      height: 68px;
+      border: 3px solid #ff9d5c;
+      border-radius: 14px;
+      position: relative;
+       display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 25px rgba(200, 100, 216, 0.5);
+      animation: rotatePhoneAnim 2.2s ease-in-out infinite;
+    }
+
+    .rotate-phone-icon::after {
+      content: "";
+      position: absolute;
+      right: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ff9d5c;
+    }
+
+    @keyframes rotatePhoneAnim {
+      0%, 15% { transform: rotate(0deg); }
+      55%, 85% { transform: rotate(-90deg); border-color: #c864d8; }
+      100% { transform: rotate(0deg); }
+    }
+
+    .rotate-title {
+      font-family: 'Mr Dafoe', cursive;
+      font-size: 3rem;
+      background: linear-gradient(180deg, #ffffff 0%, #ffb07c 50%, #e86dff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      transform: rotate(-4deg);
+    }
+
+    .rotate-msg {
+      font-size: 0.95rem;
+      max-width: 260px;
+      line-height: 1.5;
+      color: #cbb0a3;
+      margin: 0;
+    }
+
+    /* Show Overlay ONLY when on a mobile screen in portrait orientation */
+    @media screen and (max-width: 920px) and (orientation: portrait) {
+      .rotate-overlay {
+        display: flex;
+      }
+      .synth-chassis {
+        display: none !important;
+      }
     }
 
     #snowCanvas {
@@ -171,6 +244,8 @@
         0 0 0 2px var(--chassis-border);
       border-bottom: 9px solid var(--chassis-shadow);
       transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ==========================================
@@ -210,7 +285,6 @@
       50% { transform: translateY(-2px) scaleY(1.03); }
     }
 
-    /* Active Music Bounce when keys are held */
     .squirrel-stage.jamming .squirrel-char.chippy {
       animation: chippyJam 0.32s ease-in-out infinite alternate;
     }
@@ -229,7 +303,6 @@
       100% { transform: translateY(-11px) rotate(-7deg) scale(1.08); }
     }
 
-    /* Tail Wagging */
     .sq-tail {
       transform-origin: 35px 55px;
       animation: tailIdle 2.5s ease-in-out infinite alternate;
@@ -249,7 +322,6 @@
       100% { transform: rotate(14deg); }
     }
 
-    /* Center Love Heart Between Chippy & Chipette */
     .squirrel-heart {
       font-size: 1.35rem;
       margin-bottom: 28px;
@@ -281,21 +353,21 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
-      padding-bottom: 18px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
       border-bottom: 2px solid var(--panel-border);
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
     }
 
     .brand-plate {
       position: relative;
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       background: linear-gradient(145deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.18));
-      padding: 10px 26px 10px 22px;
-      border-radius: 16px;
+      padding: 8px 22px 8px 18px;
+      border-radius: 14px;
       border: 1px solid var(--chassis-border);
       box-shadow: 
         inset 0 2px 10px rgba(0,0,0,0.55),
@@ -303,7 +375,6 @@
       overflow: hidden;
     }
 
-    /* Animated Shimmer Sweep Across the Badge */
     .brand-plate::before {
       content: "";
       position: absolute;
@@ -311,12 +382,7 @@
       left: -120%;
       width: 65%;
       height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.14),
-        transparent
-      );
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
       transform: skewX(-25deg);
       animation: plateSweep 6s ease-in-out infinite;
       pointer-events: none;
@@ -327,28 +393,26 @@
       100% { left: 160%; }
     }
 
-    /* Corner Hardware Screws */
     .plate-screw {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: radial-gradient(circle, #aaa 10%, #444 90%);
       box-shadow: inset 0 1px 1px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.2);
       position: absolute;
     }
-    .plate-screw.tl { top: 6px; left: 7px; }
-    .plate-screw.tr { top: 6px; right: 7px; }
-    .plate-screw.bl { bottom: 6px; left: 7px; }
-    .plate-screw.br { bottom: 6px; right: 7px; }
+    .plate-screw.tl { top: 5px; left: 6px; }
+    .plate-screw.tr { top: 5px; right: 6px; }
+    .plate-screw.bl { bottom: 5px; left: 6px; }
+    .plate-screw.br { bottom: 5px; right: 6px; }
 
     .logo-lockup {
       position: relative;
       display: flex;
       align-items: center;
-      padding: 2px 6px;
+      padding: 2px 4px;
     }
 
-    /* Backlight Aura Behind "Best T" */
     .logo-aura {
       position: absolute;
       inset: 0;
@@ -378,7 +442,7 @@
       text-shadow: var(--logo-extrude);
       transform: rotate(var(--logo-rotate));
       padding-right: 6px;
-      transition: all 0.3s ease;
+      white-space: nowrap;
     }
 
     .brand-title .t-letter {
@@ -388,13 +452,12 @@
       transform: translateY(-1px);
     }
 
-    /* Sparkle Star on the "T" */
     .logo-sparkle {
       position: absolute;
       top: -2px;
       right: -6px;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       pointer-events: none;
       animation: twinkle 2.4s ease-in-out infinite;
     }
@@ -407,16 +470,16 @@
     .brand-meta {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       border-left: 1px solid rgba(255, 255, 255, 0.14);
-      padding-left: 14px;
+      padding-left: 12px;
     }
 
     .brand-sub {
       font-family: 'Space Mono', monospace;
-      font-size: 0.66rem;
+      font-size: 0.62rem;
       text-transform: uppercase;
-      letter-spacing: 2.5px;
+      letter-spacing: 2px;
       color: var(--cyan);
       font-weight: 700;
     }
@@ -424,24 +487,24 @@
     .edition-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      font-size: 0.63rem;
+      gap: 4px;
+      font-size: 0.6rem;
       font-weight: 700;
-      letter-spacing: 0.8px;
       color: var(--text);
       background: rgba(255, 255, 255, 0.08);
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 99px;
       border: 1px solid rgba(255, 255, 255, 0.12);
+      white-space: nowrap;
     }
 
     /* Skin Switcher Bar */
     .skin-switcher {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       background: rgba(0, 0, 0, 0.22);
-      padding: 5px;
-      border-radius: 11px;
+      padding: 4px;
+      border-radius: 10px;
       border: 1px solid var(--chassis-border);
       flex-wrap: wrap;
     }
@@ -450,20 +513,20 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 7px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s ease;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      white-space: nowrap;
     }
 
     .skin-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       display: inline-block;
     }
@@ -479,40 +542,39 @@
       background: var(--scope-bg);
       border-radius: 10px;
       border: 2px solid var(--chassis-border);
-      padding: 6px;
+      padding: 5px;
       display: flex;
       align-items: center;
       box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
     }
 
     canvas#scope {
-      width: 160px;
-      height: 46px;
+      width: 145px;
+      height: 42px;
       display: block;
     }
 
     /* Control Deck */
     .controls-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .module {
       background: var(--panel);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       border: 1px solid var(--panel-border);
-      transition: background 0.3s ease;
     }
 
     .module-title {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: var(--text-muted);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-weight: 700;
       display: flex;
       justify-content: space-between;
@@ -520,8 +582,8 @@
     }
 
     .module-title span.led {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--accent);
       box-shadow: 0 0 8px var(--accent);
@@ -530,21 +592,21 @@
     .control-row {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .param {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      font-size: 0.8rem;
+      gap: 8px;
+      font-size: 0.76rem;
     }
 
     .param label {
       color: var(--text);
       opacity: 0.9;
-      min-width: 65px;
+      min-width: 58px;
       font-weight: 500;
     }
 
@@ -552,27 +614,26 @@
     .wave-selector {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
+      gap: 4px;
+      margin-bottom: 8px;
     }
 
     .wave-btn {
       background: rgba(0, 0, 0, 0.22);
       border: 1px solid var(--chassis-border);
       color: var(--text-muted);
-      padding: 8px 4px;
-      border-radius: 6px;
-      font-size: 0.72rem;
+      padding: 6px 2px;
+      border-radius: 5px;
+      font-size: 0.68rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .wave-btn.active {
       background: var(--accent);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 0 12px var(--accent-glow);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
     /* Sliders */
@@ -590,8 +651,8 @@
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       background: var(--cyan);
       cursor: pointer;
@@ -603,70 +664,70 @@
     .keyboard-wrapper {
       position: relative;
       background: #140d0a;
-      padding: 12px 10px 10px;
+      padding: 10px 8px 8px;
       border-radius: 12px;
       box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);
-      overflow-x: auto;
       touch-action: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .keyboard {
       position: relative;
       display: flex;
-      height: 210px;
-      min-width: 660px;
+      width: 100%;
+      height: 195px;
       gap: 3px;
     }
 
     .key-white {
       flex: 1;
       background: linear-gradient(to bottom, #ffffff 0%, var(--key-white) 92%, #e5ddd5 100%);
-      border-radius: 0 0 8px 8px;
+      border-radius: 0 0 7px 7px;
       position: relative;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 12px;
-      box-shadow: 0 5px 0 #9e9189, 0 8px 12px rgba(0,0,0,0.4);
-      transition: transform 0.04s ease, background 0.04s ease, box-shadow 0.04s ease;
+      padding-bottom: 10px;
+      box-shadow: 0 4px 0 #9e9189, 0 6px 10px rgba(0,0,0,0.4);
       z-index: 1;
     }
 
     .key-white.active {
-      transform: translateY(4px);
+      transform: translateY(3px);
       background: var(--key-white-active);
-      box-shadow: 0 1px 0 #9e9189, 0 0 20px var(--accent-glow);
+      box-shadow: 0 1px 0 #9e9189, 0 0 18px var(--accent-glow);
     }
 
     .key-black {
       position: absolute;
       top: 0;
-      width: 4.2%;
+      width: 4.4%;
       height: 60%;
       background: linear-gradient(to bottom, #422b23 0%, var(--key-black) 85%, #120a07 100%);
-      border-radius: 0 0 6px 6px;
+      border-radius: 0 0 5px 5px;
       z-index: 2;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 10px;
-      box-shadow: 0 4px 0 #080504, 0 6px 10px rgba(0,0,0,0.6), inset 0 -2px 3px rgba(255,255,255,0.1);
-      transition: transform 0.04s ease, background 0.04s ease;
+      padding-bottom: 8px;
+      box-shadow: 0 3px 0 #080504, 0 5px 8px rgba(0,0,0,0.6), inset 0 -2px 2px rgba(255,255,255,0.1);
       transform: translateX(-50%);
     }
 
     .key-black.active {
       transform: translateX(-50%) translateY(3px);
       background: var(--accent);
-      box-shadow: 0 1px 0 #080504, 0 0 16px var(--accent-glow);
+      box-shadow: 0 1px 0 #080504, 0 0 14px var(--accent-glow);
     }
 
     .key-label {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       color: #7c6d65;
       pointer-events: none;
@@ -674,36 +735,35 @@
 
     .key-black .key-label {
       color: #bfa89e;
-      font-size: 0.62rem;
+      font-size: 0.58rem;
     }
 
     .key-note {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: #9e8f87;
       margin-top: 2px;
       pointer-events: none;
     }
 
-    /* Floating Acorn / Heart Particle on Key Press */
     .note-particle {
       position: fixed;
       pointer-events: none;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       z-index: 99;
-      animation: floatUp 1.1s ease-out forwards;
+      animation: floatUp 1s ease-out forwards;
     }
 
     @keyframes floatUp {
       0% { opacity: 1; transform: translateY(0) scale(0.8) rotate(0deg); }
-      100% { opacity: 0; transform: translateY(-55px) scale(1.25) rotate(12deg); }
+      100% { opacity: 0; transform: translateY(-45px) scale(1.2) rotate(12deg); }
     }
 
     .footer-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 14px;
-      font-size: 0.75rem;
+      margin-top: 10px;
+      font-size: 0.72rem;
       color: var(--text-muted);
       flex-wrap: wrap;
       gap: 8px;
@@ -712,117 +772,250 @@
     .octave-controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .btn-small {
       background: var(--panel);
       color: var(--text);
       border: 1px solid var(--chassis-border);
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 0.72rem;
     }
 
     .btn-small:active {
       background: var(--accent);
       color: #fff;
     }
+
+    /* =========================================================
+       MOBILE LANDSCAPE COCKPIT MODE (Fits Phone Screen 100%)
+       ========================================================= */
+    @media screen and (max-height: 540px) and (orientation: landscape) {
+      body {
+        padding: 6px max(10px, env(safe-area-inset-right)) 6px max(10px, env(safe-area-inset-left));
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      .synth-chassis {
+        height: 100%;
+        max-width: 100%;
+        padding: 8px 12px;
+        border-radius: 14px;
+        border-bottom-width: 4px;
+        border-left-width: 10px;
+        border-right-width: 10px;
+        justify-content: space-between;
+      }
+
+      /* Dock Squirrels neatly into the top-right header area on mobile so they aren't clipped */
+      .squirrel-stage {
+        top: 2px;
+        left: auto;
+        right: 155px;
+        transform: scale(0.52);
+        transform-origin: top right;
+      }
+
+      .top-bar {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+        gap: 8px;
+        flex-wrap: nowrap;
+      }
+
+      .brand-plate {
+        padding: 4px 12px;
+        gap: 10px;
+        border-radius: 10px;
+      }
+
+      .brand-title {
+        font-size: 1.75rem !important;
+      }
+
+      .brand-meta {
+        display: none;
+      }
+
+      .skin-switcher {
+        padding: 3px;
+        gap: 3px;
+      }
+
+      .skin-btn {
+        padding: 4px 7px;
+        font-size: 0.64rem;
+      }
+
+      .screen-container {
+        padding: 3px;
+      }
+
+      canvas#scope {
+        width: 105px;
+        height: 28px;
+      }
+
+      .controls-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      .module {
+        padding: 6px 8px;
+        border-radius: 8px;
+      }
+
+      .module-title {
+        font-size: 0.58rem;
+        margin-bottom: 4px;
+      }
+
+      .wave-selector {
+        margin-bottom: 5px;
+        gap: 3px;
+      }
+
+      .wave-btn {
+        padding: 3px 1px;
+        font-size: 0.58rem;
+      }
+
+      .control-row {
+        gap: 4px;
+      }
+
+      .param {
+        font-size: 0.64rem;
+        gap: 4px;
+      }
+
+      .param label {
+        min-width: 44px;
+      }
+
+      input[type="range"] {
+        height: 5px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        width: 13px;
+        height: 13px;
+      }
+
+      .keyboard-wrapper {
+        padding: 6px 6px 4px;
+        border-radius: 9px;
+        min-height: 0;
+      }
+
+      .keyboard {
+        height: 100%;
+        min-height: 95px;
+        gap: 2px;
+      }
+
+      .key-label {
+        display: none; /* Hide PC keyboard hints on phone to keep keys clean */
+      }
+
+      .key-white {
+        padding-bottom: 6px;
+      }
+
+      .footer-bar {
+        margin-top: 4px;
+        font-size: 0.62rem;
+      }
+
+      .btn-small {
+        padding: 2px 8px;
+        font-size: 0.62rem;
+      }
+    }
   </style>
 </head>
 <body data-skin="furrynorth">
+
+<!-- Portrait Blocker Overlay (Prompts user to rotate phone to Landscape) -->
+<div class="rotate-overlay">
+  <div class="rotate-phone-icon">🐿️</div>
+  <h2 class="rotate-title">Best T</h2>
+  <p class="rotate-msg">Please rotate your phone to <strong>Landscape Mode</strong> to play your synthesizer! 💜</p>
+</div>
 
 <!-- Ambient Falling Snow for Furry North Theme -->
 <canvas id="snowCanvas"></canvas>
 
 <div class="synth-chassis">
 
-  <!-- =========================================================
-       CHIPPY & CHIPETTE ILLUSTRATED SQUIRRELS ON TOP OF CHASSIS
-       ========================================================= -->
+  <!-- CHIPPY & CHIPETTE ILLUSTRATED SQUIRRELS -->
   <div class="squirrel-stage" id="squirrelStage">
-    <!-- CHIPPY (Warm Orange Squirrel holding an Acorn) -->
+    <!-- CHIPPY -->
     <svg class="squirrel-char chippy" viewBox="0 0 100 95" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Fluffy Tail -->
       <g class="sq-tail">
         <path d="M32 68C10 68 4 42 16 26C26 13 44 18 42 35C40 48 34 56 36 66Z" fill="#d96b27"/>
         <path d="M18 28C25 19 37 22 36 34C35 42 26 46 24 54" stroke="#f79b56" stroke-width="4" stroke-linecap="round"/>
       </g>
-      <!-- Ears -->
       <path d="M46 28L42 13L55 21Z" fill="#c45c1d"/>
       <path d="M68 27L75 13L61 21Z" fill="#d96b27"/>
       <path d="M67 25L72 16L63 21Z" fill="#ffb899"/>
-      <!-- Body -->
       <ellipse cx="56" cy="64" rx="20" ry="22" fill="#e0742f"/>
-      <!-- Cream Belly -->
       <ellipse cx="60" cy="66" rx="13" ry="16" fill="#fff1e0"/>
-      <!-- Head -->
       <circle cx="58" cy="38" r="17" fill="#e67a35"/>
-      <!-- Cute Cheeks -->
       <ellipse cx="64" cy="42" rx="11" ry="8" fill="#fff1e0"/>
       <circle cx="52" cy="42" r="3.5" fill="#ff6b8b" opacity="0.65"/>
       <circle cx="69" cy="42" r="3.5" fill="#ff6b8b" opacity="0.65"/>
-      <!-- Eyes -->
       <circle cx="54" cy="35" r="3.2" fill="#1f110b"/>
       <circle cx="55" cy="34" r="1.1" fill="#ffffff"/>
       <circle cx="66" cy="35" r="3.2" fill="#1f110b"/>
       <circle cx="67" cy="34" r="1.1" fill="#ffffff"/>
-      <!-- Nose & Smile -->
       <ellipse cx="61" cy="39" rx="2.5" ry="1.8" fill="#3d1e12"/>
       <path d="M58 43Q61 46 64 43" stroke="#3d1e12" stroke-width="1.8" stroke-linecap="round"/>
-      <!-- Acorn Held in Paws -->
       <ellipse cx="65" cy="62" rx="6" ry="7" fill="#b86928"/>
       <path d="M58 58C58 54 72 54 72 58Z" fill="#5c3112"/>
       <path d="M65 53V55" stroke="#5c3112" stroke-width="2" stroke-linecap="round"/>
-      <!-- Feet Resting on Synth -->
       <ellipse cx="48" cy="85" rx="7" ry="4" fill="#c45c1d"/>
       <ellipse cx="64" cy="85" rx="7" ry="4" fill="#c45c1d"/>
     </svg>
 
-    <!-- Center Floating Heart -->
     <div class="squirrel-heart">💜</div>
 
-    <!-- CHIPETTE (Sweet Auburn Squirrel with Her Signature Purple Bow) -->
+    <!-- CHIPETTE -->
     <svg class="squirrel-char chipette" viewBox="0 0 100 95" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Fluffy Tail (Right Side) -->
       <g class="sq-tail">
         <path d="M68 68C90 68 96 42 84 26C74 13 56 18 58 35C60 48 66 56 64 66Z" fill="#c96032"/>
         <path d="M82 28C75 19 63 22 64 34C65 42 74 46 76 54" stroke="#f2966b" stroke-width="4" stroke-linecap="round"/>
       </g>
-      <!-- Ears -->
       <path d="M32 27L25 13L39 21Z" fill="#cf6738"/>
       <path d="M54 28L58 13L45 21Z" fill="#b55226"/>
-      <!-- Body -->
       <ellipse cx="44" cy="64" rx="19" ry="21" fill="#d96e3e"/>
-      <!-- Cream Belly -->
       <ellipse cx="40" cy="66" rx="12" ry="15" fill="#fff3e6"/>
-      <!-- Head -->
       <circle cx="42" cy="38" r="16.5" fill="#e07546"/>
-      <!-- Cheeks -->
       <ellipse cx="36" cy="42" rx="11" ry="8" fill="#fff3e6"/>
       <circle cx="30" cy="42" r="3.8" fill="#ff5c97" opacity="0.75"/>
       <circle cx="47" cy="42" r="3.8" fill="#ff5c97" opacity="0.75"/>
-      <!-- Eyes with Eyelashes -->
       <circle cx="34" cy="35" r="3.2" fill="#1f110b"/>
       <circle cx="33" cy="34" r="1.1" fill="#ffffff"/>
       <path d="M31 32L28 30M33 31L31 28" stroke="#1f110b" stroke-width="1.4" stroke-linecap="round"/>
       <circle cx="46" cy="35" r="3.2" fill="#1f110b"/>
       <circle cx="45" cy="34" r="1.1" fill="#ffffff"/>
       <path d="M49 32L52 30" stroke="#1f110b" stroke-width="1.4" stroke-linecap="round"/>
-      <!-- Nose & Smile -->
       <ellipse cx="39" cy="39" rx="2.3" ry="1.6" fill="#3d1e12"/>
       <path d="M36 43Q39 46 42 43" stroke="#3d1e12" stroke-width="1.8" stroke-linecap="round"/>
-      <!-- Chipette's Signature Purple Ribbon Bow on Head -->
       <g transform="translate(35, 11) rotate(8)">
         <path d="M12 10C5 1 -3 2 -2 10C-1 18 6 17 12 10Z" fill="#c85ce0" stroke="#fae3ff" stroke-width="1.5"/>
         <path d="M16 10C23 1 31 2 30 10C29 18 22 17 16 10Z" fill="#c85ce0" stroke="#fae3ff" stroke-width="1.5"/>
         <circle cx="14" cy="10" r="3.8" fill="#e58cff" stroke="#fae3ff" stroke-width="1.2"/>
       </g>
-      <!-- Clasped Paws -->
       <circle cx="36" cy="60" r="4" fill="#c45c2f"/>
       <circle cx="43" cy="60" r="4" fill="#c45c2f"/>
-      <!-- Feet Resting on Synth -->
       <ellipse cx="36" cy="85" rx="6.5" ry="4" fill="#b55226"/>
       <ellipse cx="52" cy="85" rx="6.5" ry="4" fill="#b55226"/>
     </svg>
@@ -839,7 +1032,6 @@
       <div class="logo-lockup">
         <div class="logo-aura"></div>
         <div class="brand-title">Best <span class="t-letter">T</span></div>
-        <!-- Shimmering Starburst on the T -->
         <svg class="logo-sparkle" viewBox="0 0 24 24" fill="none">
           <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" fill="#ffffff"/>
         </svg>
@@ -847,7 +1039,7 @@
 
       <div class="brand-meta">
         <div class="brand-sub">Custom Poly Synth</div>
-        <div class="edition-pill" id="editionPill">🐿️ Furry North Edition</div>
+        <div class="edition-pill" id="editionPill">🐿️ Chippy &amp; Chipette</div>
       </div>
     </div>
 
@@ -868,7 +1060,7 @@
     </div>
 
     <div class="screen-container">
-      <canvas id="scope" width="160" height="46"></canvas>
+      <canvas id="scope" width="145" height="42"></canvas>
     </div>
   </div>
 
@@ -895,14 +1087,14 @@
     </div>
 
     <div class="module">
-      <div class="module-title">Filter (LPF) <span class="led"></span></div>
+      <div class="module-title">Filter <span class="led"></span></div>
       <div class="control-row">
         <div class="param">
           <label>Cutoff</label>
           <input type="range" id="cutoff" min="80" max="12000" step="10" value="2800">
         </div>
         <div class="param">
-          <label>Resonance</label>
+          <label>Reso</label>
           <input type="range" id="resonance" min="0.5" max="15" step="0.1" value="1.8">
         </div>
       </div>
@@ -923,7 +1115,7 @@
     </div>
 
     <div class="module">
-      <div class="module-title">Pine Forest Echo <span class="led"></span></div>
+      <div class="module-title">Echo <span class="led"></span></div>
       <div class="control-row">
         <div class="param">
           <label>Mix</label>
@@ -943,7 +1135,7 @@
   </div>
 
   <div class="footer-bar">
-    <div>Crafted for <strong>Best T</strong> ❄️ — Play via <strong>Touch / Slide</strong>, <strong>Mouse</strong>, or <strong>Keys (A–L)</strong></div>
+    <div>Crafted for <strong>Best T</strong> ❄️ — Slide fingers across keys to play</div>
     <div class="octave-controls">
       <button class="btn-small" id="octDown">- Oct</button>
       <span id="octDisplay">Octave: 4</span>
@@ -1011,7 +1203,6 @@
     if (!audioCtx) drawIdleScope();
   }
 
-  // Skin Switcher Logic
   const skinSwitcher = document.getElementById('skinSwitcher');
   skinSwitcher.addEventListener('click', (e) => {
     const btn = e.target.closest('.skin-btn');
@@ -1032,7 +1223,6 @@
     });
   }
 
-  // Spawn cute Furry North particles when playing notes
   const FURRY_ICONS = ['🌰', '💜', '🧡', '❄️', '✨'];
   function spawnFurryParticle(semiOffset) {
     if (document.body.dataset.skin !== 'furrynorth') return;
@@ -1043,9 +1233,9 @@
     p.className = 'note-particle';
     p.textContent = FURRY_ICONS[Math.floor(Math.random() * FURRY_ICONS.length)];
     p.style.left = `${rect.left + rect.width / 2 - 10}px`;
-    p.style.top = `${rect.top + 10}px`;
+    p.style.top = `${rect.top + 8}px`;
     document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1100);
+    setTimeout(() => p.remove(), 1000);
   }
 
   const getParam = (id) => parseFloat(document.getElementById(id).value);
@@ -1334,7 +1524,7 @@
     ctx.shadowBlur = 0;
   }
 
-  // Gentle Falling Snow Animation for Furry North Skin
+  // Gentle Falling Snow Animation
   const snowCanvas = document.getElementById('snowCanvas');
   const sCtx = snowCanvas.getContext('2d');
   let flakes = [];
@@ -1346,7 +1536,7 @@
   window.addEventListener('resize', resizeSnow);
   resizeSnow();
 
-  for (let i = 0; i < 45; i++) {
+  for (let i = 0; i < 40; i++) {
     flakes.push({
       x: Math.random() * snowCanvas.width,
       y: Math.random() * snowCanvas.height,
