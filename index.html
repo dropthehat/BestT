@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Best T — Custom Polyphonic Synthesizer</title>
+  <!-- Custom Expressive Fonts for Hardware Badging -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Mr+Dafoe&family=Orbitron:wght@800;900&family=Plus+Jakarta+Sans:wght@500;700&family=Space+Mono:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    /* 1. FURRY NORTH SKIN: Chippy & Chipette (Snowy Pine Forest, Warm Fur & Rose-Gold Script) */
+    :root, body[data-skin="furrynorth"] {
+      --bg-gradient: radial-gradient(circle at 50% 20%, #243b39 0%, #0d1717 100%);
+      --chassis: #4c3024;
+      --chassis-border: #7d513f;
+      --chassis-shadow: #281711;
+      --wood-cheek: 18px solid #8c5035;
+      --panel: #382219;
+      --panel-border: rgba(255, 224, 194, 0.15);
+      --accent: #c864d8;
+      --accent-glow: rgba(200, 100, 216, 0.65);
+      --cyan: #ff9d5c;
+      --scope-bg: #150e0b;
+      --text: #fdf6f0;
+      --text-muted: #cbb0a3;
+      --key-white: #fffcf7;
+      --key-white-active: linear-gradient(to bottom, #fae8ff 0%, #e4a9f0 100%);
+      --key-black: #261610;
+      /* Emblem Styling */
+      --logo-font: 'Mr Dafoe', cursive;
+      --logo-size: 3.1rem;
+      --logo-fill: linear-gradient(180deg, #ffffff 0%, #ffe3d1 35%, #ff9a62 70%, #e86dff 100%);
+      --logo-extrude: 0 2px 0 #6e2c14, 0 4px 0 #3d1507, 0 0 22px rgba(255, 154, 98, 0.75), 0 0 40px rgba(200, 100, 216, 0.55);
+      --logo-rotate: -5deg;
+      --logo-spacing: 1px;
+    }
+
+    /* 2. CYBERPUNK NEON SKIN */
+    body[data-skin="cyber"] {
+      --bg-gradient: radial-gradient(circle at center, #26173e 0%, #0d0b14 100%);
+      --chassis: #1b1926;
+      --chassis-border: #35304d;
+      --chassis-shadow: #0e0c14;
+      --wood-cheek: none;
+      --panel: #242134;
+      --panel-border: rgba(255, 255, 255, 0.07);
+      --accent: #ff2a85;
+      --accent-glow: rgba(255, 42, 133, 0.65);
+      --cyan: #00f2fe;
+      --scope-bg: #09080e;
+      --text: #f2effa;
+      --text-muted: #8e88a8;
+      --key-white: #f8f6fc;
+      --key-white-active: linear-gradient(to bottom, #ffd9ea 0%, #ff85bc 100%);
+      --key-black: #171520;
+      /* Emblem Styling */
+      --logo-font: 'Mr Dafoe', cursive;
+      --logo-size: 3.2rem;
+      --logo-fill: linear-gradient(180deg, #ffffff 0%, #ff9ec7 35%, #ff2a85 75%, #00f2fe 100%);
+      --logo-extrude: 0 2px 0 #7a0035, 0 4px 0 #380018, 0 0 18px #ff2a85, 0 0 38px rgba(0, 242, 254, 0.7);
+      --logo-rotate: -6deg;
+      --logo-spacing: 2px;
+    }
+
+    /* 3. VINTAGE ANALOG SKIN (Brushed Brass & Walnut) */
+    body[data-skin="vintage"] {
+      --bg-gradient: radial-gradient(circle at center, #2c221e 0%, #120d0b 100%);
+      --chassis: #221e1b;
+      --chassis-border: #4d4036;
+      --chassis-shadow: #110d0b;
+      --wood-cheek: 18px solid #6b371e;
+      --panel: #191613;
+      --panel-border: rgba(255, 204, 128, 0.1);
+      --accent: #ff9d00;
+      --accent-glow: rgba(255, 157, 0, 0.5);
+      --cyan: #ffb700;
+      --scope-bg: #120e07;
+      --text: #f5ebd6;
+      --text-muted: #9c8f7a;
+      --key-white: #f4ebd9;
+      --key-white-active: linear-gradient(to bottom, #ffe8b8 0%, #ffc966 100%);
+      --key-black: #1c1815;
+      /* Emblem Styling */
+      --logo-font: 'Cinzel Decorative', serif;
+      --logo-size: 2.35rem;
+      --logo-fill: linear-gradient(180deg, #fff6d6 0%, #ffd269 40%, #c98312 75%, #f5c156 100%);
+      --logo-extrude: 0 2px 0 #593600, 0 4px 8px rgba(0,0,0,0.8), 0 0 20px rgba(255, 183, 0, 0.45);
+      --logo-rotate: 0deg;
+      --logo-spacing: 3px;
+    }
+
+    /* 4. MINIMALIST STUDIO SKIN (Teenage Engineering Style) */
+    body[data-skin="minimal"] {
+      --bg-gradient: radial-gradient(circle at center, #eaedf2 0%, #cdd3dc 100%);
+      --chassis: #f3f4f7;
+      --chassis-border: #d0d5de;
+      --chassis-shadow: #b3bac6;
+      --wood-cheek: none;
+      --panel: #e4e7ed;
+      --panel-border: rgba(0, 0, 0, 0.07);
+      --accent: #ff5100;
+      --accent-glow: rgba(255, 81, 0, 0.35);
+      --cyan: #0055ff;
+      --scope-bg: #181a1f;
+      --text: #1c1f26;
+      --text-muted: #666e80;
+      --key-white: #ffffff;
+      --key-white-active: linear-gradient(to bottom, #ffd8c4 0%, #ff9d6b 100%);
+      --key-black: #282b33;
+      /* Emblem Styling */
+      --logo-font: 'Orbitron', sans-serif;
+      --logo-size: 2.1rem;
+      --logo-fill: linear-gradient(135deg, #ff5100 0%, #ff2200 60%, #1c1f26 100%);
+      --logo-extrude: 2px 2px 0px #ffffff, 4px 4px 0px rgba(0,0,0,0.12);
+      --logo-rotate: 0deg;
+      --logo-spacing: 4px;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 68px 16px 20px;
+      transition: background 0.4s ease, color 0.25s ease;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #snowCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    body[data-skin="furrynorth"] #snowCanvas {
+      opacity: 1;
+    }
+
+    .synth-chassis {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 960px;
+      background: var(--chassis);
+      border-radius: 22px;
+      padding: 26px 24px 24px;
+      border-left: var(--wood-cheek);
+      border-right: var(--wood-cheek);
+      box-shadow: 
+        0 28px 65px rgba(0, 0, 0, 0.65),
+        inset 0 2px 4px rgba(255, 255, 255, 0.14),
+        0 0 0 2px var(--chassis-border);
+      border-bottom: 9px solid var(--chassis-shadow);
+      transition: all 0.3s ease;
+    }
+
+    /* ==========================================
+       CHIPPY & CHIPETTE ANIMATED SQUIRREL STAGE
+       ========================================== */
+    .squirrel-stage {
+      position: absolute;
+      top: -66px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      align-items: flex-end;
+      gap: 4px;
+      pointer-events: none;
+      z-index: 10;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.45));
+    }
+
+    body[data-skin="furrynorth"] .squirrel-stage {
+      display: flex;
+    }
+
+    .squirrel-char {
+      width: 78px;
+      height: 74px;
+      transform-origin: bottom center;
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: squirrelIdle 3.2s ease-in-out infinite;
+    }
+
+    .squirrel-char.chipette {
+      animation-delay: -1.6s;
+    }
+
+    @keyframes squirrelIdle {
+      0%, 100% { transform: translateY(0) scaleY(1); }
+      50% { transform: translateY(-2px) scaleY(1.03); }
+    }
+
+    /* Active Music Bounce when keys are held */
+    .squirrel-stage.jamming .squirrel-char.chippy {
+      animation: chippyJam 0.32s ease-in-out infinite alternate;
+    }
+
+    .squirrel-stage.jamming .squirrel-char.chipette {
+      animation: chipetteJam 0.32s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes chippyJam {
+      0% { transform: translateY(0) rotate(-6deg) scale(1.04); }
+      100% { transform: translateY(-11px) rotate(7deg) scale(1.08); }
+    }
+
+    @keyframes chipetteJam {
+      0% { transform: translateY(0) rotate(6deg) scale(1.04); }
+      100% { transform: translateY(-11px) rotate(-7deg) scale(1.08); }
+    }
+
+    /* Tail Wagging */
+    .sq-tail {
+      transform-origin: 35px 55px;
+      animation: tailIdle 2.5s ease-in-out infinite alternate;
+    }
+
+    .squirrel-stage.jamming .sq-tail {
+      animation: tailFast 0.22s ease-in-out infinite alternate;
+    }
+
+    @keyframes tailIdle {
+      0% { transform: rotate(-4deg); }
+      100% { transform: rotate(5deg); }
+    }
+
+    @keyframes tailFast {
+      0% { transform: rotate(-14deg); }
+      100% { transform: rotate(14deg); }
+    }
+
+    /* Center Love Heart Between Chippy & Chipette */
+    .squirrel-heart {
+      font-size: 1.35rem;
+      margin-bottom: 28px;
+      opacity: 0.75;
+      transform-origin: center;
+      animation: heartPulse 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(255, 105, 180, 0.8));
+    }
+
+    .squirrel-stage.jamming .squirrel-heart {
+      opacity: 1;
+      animation: heartJam 0.3s ease-in-out infinite alternate;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(0.9); }
+      50% { transform: scale(1.12); }
+    }
+
+    @keyframes heartJam {
+      0% { transform: scale(1.1) translateY(0); }
+      100% { transform: scale(1.45) translateY(-8px); }
+    }
+
+    /* ==========================================
+       LUXURY HARDWARE "BEST T" EMBLEM PLATE
+       ========================================== */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--panel-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-plate {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: linear-gradient(145deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.18));
+      padding: 10px 26px 10px 22px;
+      border-radius: 16px;
+      border: 1px solid var(--chassis-border);
+      box-shadow: 
+        inset 0 2px 10px rgba(0,0,0,0.55),
+        0 4px 15px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    /* Animated Shimmer Sweep Across the Badge */
+    .brand-plate::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.14),
+        transparent
+      );
+      transform: skewX(-25deg);
+      animation: plateSweep 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes plateSweep {
+      0%, 65% { left: -120%; }
+      100% { left: 160%; }
+    }
+
+    /* Corner Hardware Screws */
+    .plate-screw {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #aaa 10%, #444 90%);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.2);
+      position: absolute;
+    }
+    .plate-screw.tl { top: 6px; left: 7px; }
+    .plate-screw.tr { top: 6px; right: 7px; }
+    .plate-screw.bl { bottom: 6px; left: 7px; }
+    .plate-screw.br { bottom: 6px; right: 7px; }
+
+    .logo-lockup {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 2px 6px;
+    }
+
+    /* Backlight Aura Behind "Best T" */
+    .logo-aura {
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      filter: blur(22px);
+      opacity: 0.35;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .brand-plate.playing .logo-aura {
+      opacity: 0.75;
+      transform: scale(1.2);
+    }
+
+    .brand-title {
+      position: relative;
+      font-family: var(--logo-font);
+      font-size: var(--logo-size);
+      line-height: 1;
+      letter-spacing: var(--logo-spacing);
+      background: var(--logo-fill);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+      text-shadow: var(--logo-extrude);
+      transform: rotate(var(--logo-rotate));
+      padding-right: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .brand-title .t-letter {
+      display: inline-block;
+      font-size: 1.16em;
+      margin-left: 2px;
+      transform: translateY(-1px);
+    }
+
+    /* Sparkle Star on the "T" */
+    .logo-sparkle {
+      position: absolute;
+      top: -2px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      animation: twinkle 2.4s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.6; }
+      50% { transform: scale(1.2) rotate(45deg); opacity: 1; }
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-left: 1px solid rgba(255, 255, 255, 0.14);
+      padding-left: 14px;
+    }
+
+    .brand-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .edition-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 8px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Skin Switcher Bar */
+    .skin-switcher {
+      display: flex;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 5px;
+      border-radius: 11px;
+      border: 1px solid var(--chassis-border);
+      flex-wrap: wrap;
+    }
+
+    .skin-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .skin-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .skin-btn.active {
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Oscilloscope Screen */
+    .screen-container {
+      background: var(--scope-bg);
+      border-radius: 10px;
+      border: 2px solid var(--chassis-border);
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+
+    canvas#scope {
+      width: 160px;
+      height: 46px;
+      display: block;
+    }
+
+    /* Control Deck */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .module {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--panel-border);
+      transition: background 0.3s ease;
+    }
+
+    .module-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .module-title span.led {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .param {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+
+    .param label {
+      color: var(--text);
+      opacity: 0.9;
+      min-width: 65px;
+      font-weight: 500;
+    }
+
+    /* Wave Buttons */
+    .wave-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .wave-btn {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--chassis-border);
+      color: var(--text-muted);
+      padding: 8px 4px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .wave-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      outline: none;
+      border: 1px solid var(--chassis-border);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-glow);
+      border: 2px solid #fff;
+    }
+
+    /* Keyboard Area */
+    .keyboard-wrapper {
+      position: relative;
+      background: #140d0a;
+      padding: 12px 10px 10px;
+      border-radius: 12px;
+      box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);
+      overflow-x: auto;
+      touch-action: none;
+    }
+
+    .keyboard {
+      position: relative;
+      display: flex;
+      height: 210px;
+      min-width: 660px;
+      gap: 3px;
+    }
+
+    .key-white {
+      flex: 1;
+      background: linear-gradient(to bottom, #ffffff 0%, var(--key-white) 92%, #e5ddd5 100%);
+      border-radius: 0 0 8px 8px;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 12px;
+      box-shadow: 0 5px 0 #9e9189, 0 8px 12px rgba(0,0,0,0.4);
+      transition: transform 0.04s ease, background 0.04s ease, box-shadow 0.04s ease;
+      z-index: 1;
+    }
+
+    .key-white.active {
+      transform: translateY(4px);
+      background: var(--key-white-active);
+      box-shadow: 0 1px 0 #9e9189, 0 0 20px var(--accent-glow);
+    }
+
+    .key-black {
+      position: absolute;
+      top: 0;
+      width: 4.2%;
+      height: 60%;
+      background: linear-gradient(to bottom, #422b23 0%, var(--key-black) 85%, #120a07 100%);
+      border-radius: 0 0 6px 6px;
+      z-index: 2;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 10px;
+      box-shadow: 0 4px 0 #080504, 0 6px 10px rgba(0,0,0,0.6), inset 0 -2px 3px rgba(255,255,255,0.1);
+      transition: transform 0.04s ease, background 0.04s ease;
+      transform: translateX(-50%);
+    }
+
+    .key-black.active {
+      transform: translateX(-50%) translateY(3px);
+      background: var(--accent);
+      box-shadow: 0 1px 0 #080504, 0 0 16px var(--accent-glow);
+    }
+
+    .key-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #7c6d65;
+      pointer-events: none;
+    }
+
+    .key-black .key-label {
+      color: #bfa89e;
+      font-size: 0.62rem;
+    }
+
+    .key-note {
+      font-size: 0.6rem;
+      color: #9e8f87;
+      margin-top: 2px;
+      pointer-events: none;
+    }
+
+    /* Floating Acorn / Heart Particle on Key Press */
+    .note-particle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.15rem;
+      z-index: 99;
+      animation: floatUp 1.1s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(0.8) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-55px) scale(1.25) rotate(12deg); }
+    }
+
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .octave-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-small {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--chassis-border);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-small:active {
+      background: var(--accent);
+      color: #fff;
+    }
+  </style>
+</head>
+<body data-skin="furrynorth">
+
+<!-- Ambient Falling Snow for Furry North Theme -->
+<canvas id="snowCanvas"></canvas>
+
+<div class="synth-chassis">
+
+  <!-- =========================================================
+       CHIPPY & CHIPETTE ILLUSTRATED SQUIRRELS ON TOP OF CHASSIS
+       ========================================================= -->
+  <div class="squirrel-stage" id="squirrelStage">
+    <!-- CHIPPY (Warm Orange Squirrel holding an Acorn) -->
+    <svg class="squirrel-char chippy" viewBox="0 0 100 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fluffy Tail -->
+      <g class="sq-tail">
+        <path d="M32 68C10 68 4 42 16 26C26 13 44 18 42 35C40 48 34 56 36 66Z" fill="#d96b27"/>
+        <path d="M18 28C25 19 37 22 36 34C35 42 26 46 24 54" stroke="#f79b56" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <!-- Ears -->
+      <path d="M46 28L42 13L55 21Z" fill="#c45c1d"/>
+      <path d="M68 27L75 13L61 21Z" fill="#d96b27"/>
+      <path d="M67 25L72 16L63 21Z" fill="#ffb899"/>
+      <!-- Body -->
+      <ellipse cx="56" cy="64" rx="20" ry="22" fill="#e0742f"/>
+      <!-- Cream Belly -->
+      <ellipse cx="60" cy="66" rx="13" ry="16" fill="#fff1e0"/>
+      <!-- Head -->
+      <circle cx="58" cy="38" r="17" fill="#e67a35"/>
+      <!-- Cute Cheeks -->
+      <ellipse cx="64" cy="42" rx="11" ry="8" fill="#fff1e0"/>
+      <circle cx="52" cy="42" r="3.5" fill="#ff6b8b" opacity="0.65"/>
+      <circle cx="69" cy="42" r="3.5" fill="#ff6b8b" opacity="0.65"/>
+      <!-- Eyes -->
+      <circle cx="54" cy="35" r="3.2" fill="#1f110b"/>
+      <circle cx="55" cy="34" r="1.1" fill="#ffffff"/>
+      <circle cx="66" cy="35" r="3.2" fill="#1f110b"/>
+      <circle cx="67" cy="34" r="1.1" fill="#ffffff"/>
+      <!-- Nose & Smile -->
+      <ellipse cx="61" cy="39" rx="2.5" ry="1.8" fill="#3d1e12"/>
+      <path d="M58 43Q61 46 64 43" stroke="#3d1e12" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- Acorn Held in Paws -->
+      <ellipse cx="65" cy="62" rx="6" ry="7" fill="#b86928"/>
+      <path d="M58 58C58 54 72 54 72 58Z" fill="#5c3112"/>
+      <path d="M65 53V55" stroke="#5c3112" stroke-width="2" stroke-linecap="round"/>
+      <!-- Feet Resting on Synth -->
+      <ellipse cx="48" cy="85" rx="7" ry="4" fill="#c45c1d"/>
+      <ellipse cx="64" cy="85" rx="7" ry="4" fill="#c45c1d"/>
+    </svg>
+
+    <!-- Center Floating Heart -->
+    <div class="squirrel-heart">💜</div>
+
+    <!-- CHIPETTE (Sweet Auburn Squirrel with Her Signature Purple Bow) -->
+    <svg class="squirrel-char chipette" viewBox="0 0 100 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fluffy Tail (Right Side) -->
+      <g class="sq-tail">
+        <path d="M68 68C90 68 96 42 84 26C74 13 56 18 58 35C60 48 66 56 64 66Z" fill="#c96032"/>
+        <path d="M82 28C75 19 63 22 64 34C65 42 74 46 76 54" stroke="#f2966b" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <!-- Ears -->
+      <path d="M32 27L25 13L39 21Z" fill="#cf6738"/>
+      <path d="M54 28L58 13L45 21Z" fill="#b55226"/>
+      <!-- Body -->
+      <ellipse cx="44" cy="64" rx="19" ry="21" fill="#d96e3e"/>
+      <!-- Cream Belly -->
+      <ellipse cx="40" cy="66" rx="12" ry="15" fill="#fff3e6"/>
+      <!-- Head -->
+      <circle cx="42" cy="38" r="16.5" fill="#e07546"/>
+      <!-- Cheeks -->
+      <ellipse cx="36" cy="42" rx="11" ry="8" fill="#fff3e6"/>
+      <circle cx="30" cy="42" r="3.8" fill="#ff5c97" opacity="0.75"/>
+      <circle cx="47" cy="42" r="3.8" fill="#ff5c97" opacity="0.75"/>
+      <!-- Eyes with Eyelashes -->
+      <circle cx="34" cy="35" r="3.2" fill="#1f110b"/>
+      <circle cx="33" cy="34" r="1.1" fill="#ffffff"/>
+      <path d="M31 32L28 30M33 31L31 28" stroke="#1f110b" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="46" cy="35" r="3.2" fill="#1f110b"/>
+      <circle cx="45" cy="34" r="1.1" fill="#ffffff"/>
+      <path d="M49 32L52 30" stroke="#1f110b" stroke-width="1.4" stroke-linecap="round"/>
+      <!-- Nose & Smile -->
+      <ellipse cx="39" cy="39" rx="2.3" ry="1.6" fill="#3d1e12"/>
+      <path d="M36 43Q39 46 42 43" stroke="#3d1e12" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- Chipette's Signature Purple Ribbon Bow on Head -->
+      <g transform="translate(35, 11) rotate(8)">
+        <path d="M12 10C5 1 -3 2 -2 10C-1 18 6 17 12 10Z" fill="#c85ce0" stroke="#fae3ff" stroke-width="1.5"/>
+        <path d="M16 10C23 1 31 2 30 10C29 18 22 17 16 10Z" fill="#c85ce0" stroke="#fae3ff" stroke-width="1.5"/>
+        <circle cx="14" cy="10" r="3.8" fill="#e58cff" stroke="#fae3ff" stroke-width="1.2"/>
+      </g>
+      <!-- Clasped Paws -->
+      <circle cx="36" cy="60" r="4" fill="#c45c2f"/>
+      <circle cx="43" cy="60" r="4" fill="#c45c2f"/>
+      <!-- Feet Resting on Synth -->
+      <ellipse cx="36" cy="85" rx="6.5" ry="4" fill="#b55226"/>
+      <ellipse cx="52" cy="85" rx="6.5" ry="4" fill="#b55226"/>
+    </svg>
+  </div>
+
+  <!-- Top Bar with Sculpted "Best T" Emblem + Skin Switcher + Scope -->
+  <div class="top-bar">
+    <div class="brand-plate" id="brandPlate">
+      <span class="plate-screw tl"></span>
+      <span class="plate-screw tr"></span>
+      <span class="plate-screw bl"></span>
+      <span class="plate-screw br"></span>
+
+      <div class="logo-lockup">
+        <div class="logo-aura"></div>
+        <div class="brand-title">Best <span class="t-letter">T</span></div>
+        <!-- Shimmering Starburst on the T -->
+        <svg class="logo-sparkle" viewBox="0 0 24 24" fill="none">
+          <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" fill="#ffffff"/>
+        </svg>
+      </div>
+
+      <div class="brand-meta">
+        <div class="brand-sub">Custom Poly Synth</div>
+        <div class="edition-pill" id="editionPill">🐿️ Furry North Edition</div>
+      </div>
+    </div>
+
+    <!-- Skin Selector -->
+    <div class="skin-switcher" id="skinSwitcher">
+      <button class="skin-btn active" data-skin="furrynorth">
+        <span class="skin-dot" style="background:#c864d8;"></span>🐿️ Furry North
+      </button>
+      <button class="skin-btn" data-skin="cyber">
+        <span class="skin-dot" style="background:#ff2a85;"></span>Neon
+      </button>
+      <button class="skin-btn" data-skin="vintage">
+        <span class="skin-dot" style="background:#ff9d00;"></span>Vintage
+      </button>
+      <button class="skin-btn" data-skin="minimal">
+        <span class="skin-dot" style="background:#ff5100;"></span>Studio
+      </button>
+    </div>
+
+    <div class="screen-container">
+      <canvas id="scope" width="160" height="46"></canvas>
+    </div>
+  </div>
+
+  <!-- Synth Modules -->
+  <div class="controls-grid">
+    <div class="module">
+      <div class="module-title">Oscillator <span class="led"></span></div>
+      <div class="wave-selector" id="waveSelector">
+        <button class="wave-btn" data-wave="sawtooth">SAW</button>
+        <button class="wave-btn" data-wave="square">SQR</button>
+        <button class="wave-btn active" data-wave="triangle">TRI</button>
+        <button class="wave-btn" data-wave="sine">SIN</button>
+      </div>
+      <div class="control-row">
+        <div class="param">
+          <label>Detune</label>
+          <input type="range" id="detune" min="0" max="40" value="10">
+        </div>
+        <div class="param">
+          <label>Volume</label>
+          <input type="range" id="volume" min="0" max="1" step="0.01" value="0.65">
+        </div>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-title">Filter (LPF) <span class="led"></span></div>
+      <div class="control-row">
+        <div class="param">
+          <label>Cutoff</label>
+          <input type="range" id="cutoff" min="80" max="12000" step="10" value="2800">
+        </div>
+        <div class="param">
+          <label>Resonance</label>
+          <input type="range" id="resonance" min="0.5" max="15" step="0.1" value="1.8">
+        </div>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-title">Envelope <span class="led"></span></div>
+      <div class="control-row">
+        <div class="param">
+          <label>Attack</label>
+          <input type="range" id="attack" min="0.005" max="1.5" step="0.01" value="0.03">
+        </div>
+        <div class="param">
+          <label>Release</label>
+          <input type="range" id="release" min="0.05" max="3.0" step="0.05" value="0.6">
+        </div>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-title">Pine Forest Echo <span class="led"></span></div>
+      <div class="control-row">
+        <div class="param">
+          <label>Mix</label>
+          <input type="range" id="delayMix" min="0" max="0.75" step="0.01" value="0.32">
+        </div>
+        <div class="param">
+          <label>Time</label>
+          <input type="range" id="delayTime" min="0.08" max="0.7" step="0.01" value="0.34">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Keyboard -->
+  <div class="keyboard-wrapper">
+    <div class="keyboard" id="keyboard"></div>
+  </div>
+
+  <div class="footer-bar">
+    <div>Crafted for <strong>Best T</strong> ❄️ — Play via <strong>Touch / Slide</strong>, <strong>Mouse</strong>, or <strong>Keys (A–L)</strong></div>
+    <div class="octave-controls">
+      <button class="btn-small" id="octDown">- Oct</button>
+      <span id="octDisplay">Octave: 4</span>
+      <button class="btn-small" id="octUp">+ Oct</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const NOTES = [
+    { note: 'C',  semi: 0,  black: false, key: 'A' },
+    { note: 'C#', semi: 1,  black: true,  key: 'W' },
+    { note: 'D',  semi: 2,  black: false, key: 'S' },
+    { note: 'D#', semi: 3,  black: true,  key: 'E' },
+    { note: 'E',  semi: 4,  black: false, key: 'D' },
+    { note: 'F',  semi: 5,  black: false, key: 'F' },
+    { note: 'F#', semi: 6,  black: true,  key: 'T' },
+    { note: 'G',  semi: 7,  black: false, key: 'G' },
+    { note: 'G#', semi: 8,  black: true,  key: 'Y' },
+    { note: 'A',  semi: 9,  black: false, key: 'H' },
+    { note: 'A#', semi: 10, black: true,  key: 'U' },
+    { note: 'B',  semi: 11, black: false, key: 'J' },
+    { note: 'C',  semi: 12, black: false, key: 'K' },
+    { note: 'C#', semi: 13, black: true,  key: 'O' },
+    { note: 'D',  semi: 14, black: false, key: 'L' },
+    { note: 'D#', semi: 15, black: true,  key: 'P' },
+    { note: 'E',  semi: 16, black: false, key: ';' },
+    { note: 'F',  semi: 17, black: false, key: "'" }
+  ];
+
+  const EDITION_LABELS = {
+    furrynorth: '🐿️ Chippy & Chipette',
+    cyber: '⚡ Cyberpunk Signature',
+    vintage: '✨ Gold Analog Reserve',
+    minimal: '🎛️ Studio Reference'
+  };
+
+  let baseOctave = 4;
+  let currentWave = 'triangle';
+  let audioCtx = null;
+  let masterGain, filterNode, delayNode, feedbackGain, delayWetGain, analyser;
+  const activeVoices = new Map();
+
+  let scopeStrokeColor = '#ff9d5c';
+  let scopeIdleColor = '#c864d8';
+  let scopeBgColor = '#150e0b';
+
+  const squirrelStage = document.getElementById('squirrelStage');
+  const brandPlate = document.getElementById('brandPlate');
+  const editionPill = document.getElementById('editionPill');
+
+  function updateVisualPerformers() {
+    const isPlaying = activeVoices.size > 0;
+    squirrelStage.classList.toggle('jamming', isPlaying);
+    brandPlate.classList.toggle('playing', isPlaying);
+  }
+
+  function syncThemeColors() {
+    const skin = document.body.dataset.skin || 'furrynorth';
+    const styles = getComputedStyle(document.body);
+    scopeStrokeColor = styles.getPropertyValue('--cyan').trim() || '#ff9d5c';
+    scopeIdleColor = styles.getPropertyValue('--accent').trim() || '#c864d8';
+    scopeBgColor = styles.getPropertyValue('--scope-bg').trim() || '#150e0b';
+    editionPill.textContent = EDITION_LABELS[skin] || EDITION_LABELS.furrynorth;
+    if (!audioCtx) drawIdleScope();
+  }
+
+  // Skin Switcher Logic
+  const skinSwitcher = document.getElementById('skinSwitcher');
+  skinSwitcher.addEventListener('click', (e) => {
+    const btn = e.target.closest('.skin-btn');
+    if (!btn) return;
+    const skin = btn.dataset.skin;
+    document.body.dataset.skin = skin;
+    document.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    localStorage.setItem('best_t_synth_skin', skin);
+    syncThemeColors();
+  });
+
+  const savedSkin = localStorage.getItem('best_t_synth_skin');
+  if (savedSkin && EDITION_LABELS[savedSkin]) {
+    document.body.dataset.skin = savedSkin;
+    document.querySelectorAll('.skin-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.skin === savedSkin);
+    });
+  }
+
+  // Spawn cute Furry North particles when playing notes
+  const FURRY_ICONS = ['🌰', '💜', '🧡', '❄️', '✨'];
+  function spawnFurryParticle(semiOffset) {
+    if (document.body.dataset.skin !== 'furrynorth') return;
+    const keyEl = keyboardEl.querySelector(`[data-semi="${semiOffset}"]`);
+    if (!keyEl) return;
+    const rect = keyEl.getBoundingClientRect();
+    const p = document.createElement('div');
+    p.className = 'note-particle';
+    p.textContent = FURRY_ICONS[Math.floor(Math.random() * FURRY_ICONS.length)];
+    p.style.left = `${rect.left + rect.width / 2 - 10}px`;
+    p.style.top = `${rect.top + 10}px`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1100);
+  }
+
+  const getParam = (id) => parseFloat(document.getElementById(id).value);
+
+  function initAudio() {
+    if (audioCtx) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return;
+    }
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = getParam('volume');
+
+    filterNode = audioCtx.createBiquadFilter();
+    filterNode.type = 'lowpass';
+    filterNode.frequency.value = getParam('cutoff');
+    filterNode.Q.value = getParam('resonance');
+
+    delayNode = audioCtx.createDelay(2.0);
+    delayNode.delayTime.value = getParam('delayTime');
+
+    feedbackGain = audioCtx.createGain();
+    feedbackGain.gain.value = 0.4;
+
+    delayWetGain = audioCtx.createGain();
+    delayWetGain.gain.value = getParam('delayMix');
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+
+    filterNode.connect(masterGain);
+    filterNode.connect(delayNode);
+    delayNode.connect(feedbackGain);
+    feedbackGain.connect(delayNode);
+    delayNode.connect(delayWetGain);
+    delayWetGain.connect(masterGain);
+
+    masterGain.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    drawScope();
+  }
+
+  function midiToFreq(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  function startNote(semiOffset) {
+    initAudio();
+    if (activeVoices.has(semiOffset)) return;
+
+    const midi = (baseOctave + 1) * 12 + semiOffset;
+    const freq = midiToFreq(midi);
+    const now = audioCtx.currentTime;
+
+    const voiceGain = audioCtx.createGain();
+    voiceGain.gain.setValueAtTime(0.0001, now);
+    voiceGain.gain.linearRampToValueAtTime(0.35, now + getParam('attack'));
+
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    osc1.type = currentWave;
+    osc2.type = currentWave;
+
+    const detuneVal = getParam('detune');
+    osc1.frequency.setValueAtTime(freq, now);
+    osc2.frequency.setValueAtTime(freq, now);
+    osc1.detune.setValueAtTime(-detuneVal, now);
+    osc2.detune.setValueAtTime(detuneVal, now);
+
+    osc1.connect(voiceGain);
+    osc2.connect(voiceGain);
+    voiceGain.connect(filterNode);
+
+    osc1.start(now);
+    osc2.start(now);
+
+    activeVoices.set(semiOffset, { osc1, osc2, voiceGain });
+    highlightKey(semiOffset, true);
+    spawnFurryParticle(semiOffset);
+    updateVisualPerformers();
+  }
+
+  function stopNote(semiOffset) {
+    const voice = activeVoices.get(semiOffset);
+    if (!voice || !audioCtx) return;
+
+    const now = audioCtx.currentTime;
+    const release = getParam('release');
+
+    voice.voiceGain.gain.cancelScheduledValues(now);
+    voice.voiceGain.gain.setValueAtTime(Math.max(voice.voiceGain.gain.value, 0.0001), now);
+    voice.voiceGain.gain.exponentialRampToValueAtTime(0.0001, now + release);
+
+    voice.osc1.stop(now + release + 0.02);
+    voice.osc2.stop(now + release + 0.02);
+
+    activeVoices.delete(semiOffset);
+    highlightKey(semiOffset, false);
+    updateVisualPerformers();
+  }
+
+  const keyboardEl = document.getElementById('keyboard');
+  const whiteNotes = NOTES.filter(n => !n.black);
+  const totalWhite = whiteNotes.length;
+
+  let whiteIndex = 0;
+  NOTES.forEach((n) => {
+    const keyEl = document.createElement('div');
+    keyEl.dataset.semi = n.semi;
+
+    if (!n.black) {
+      keyEl.className = 'key-white';
+      keyEl.innerHTML = `<span class="key-label">${n.key}</span><span class="key-note">${n.note}</span>`;
+      keyboardEl.appendChild(keyEl);
+      whiteIndex++;
+    } else {
+      keyEl.className = 'key-black';
+      const leftPercent = (whiteIndex / totalWhite) * 100;
+      keyEl.style.left = `${leftPercent}%`;
+      keyEl.innerHTML = `<span class="key-label">${n.key}</span>`;
+      keyboardEl.appendChild(keyEl);
+    }
+  });
+
+  function highlightKey(semi, isActive) {
+    const keyEl = keyboardEl.querySelector(`[data-semi="${semi}"]`);
+    if (keyEl) keyEl.classList.toggle('active', isActive);
+  }
+
+  const activePointers = new Map();
+
+  function getSemiFromPoint(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    const keyEl = el.closest('[data-semi]');
+    return keyEl ? parseInt(keyEl.dataset.semi, 10) : null;
+  }
+
+  keyboardEl.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    keyboardEl.setPointerCapture(e.pointerId);
+    const semi = getSemiFromPoint(e.clientX, e.clientY);
+    if (semi !== null) {
+      activePointers.set(e.pointerId, semi);
+      startNote(semi);
+    }
+  });
+
+  keyboardEl.addEventListener('pointermove', (e) => {
+    if (!activePointers.has(e.pointerId)) return;
+    const prevSemi = activePointers.get(e.pointerId);
+    const currentSemi = getSemiFromPoint(e.clientX, e.clientY);
+
+    if (currentSemi !== prevSemi) {
+      if (prevSemi !== null) stopNote(prevSemi);
+      if (currentSemi !== null) startNote(currentSemi);
+      activePointers.set(e.pointerId, currentSemi);
+    }
+  });
+
+  function endPointer(e) {
+    if (activePointers.has(e.pointerId)) {
+      const semi = activePointers.get(e.pointerId);
+      if (semi !== null) stopNote(semi);
+      activePointers.delete(e.pointerId);
+    }
+  }
+
+  keyboardEl.addEventListener('pointerup', endPointer);
+  keyboardEl.addEventListener('pointercancel', endPointer);
+
+  const keyMap = {};
+  NOTES.forEach(n => { keyMap[n.key.toLowerCase()] = n.semi; });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.repeat || e.metaKey || e.ctrlKey) return;
+    const k = e.key.toLowerCase();
+    if (k === 'z') { changeOctave(-1); return; }
+    if (k === 'x') { changeOctave(1); return; }
+    if (keyMap[k] !== undefined) startNote(keyMap[k]);
+  });
+
+  window.addEventListener('keyup', (e) => {
+    const k = e.key.toLowerCase();
+    if (keyMap[k] !== undefined) stopNote(keyMap[k]);
+  });
+
+  document.getElementById('waveSelector').addEventListener('click', (e) => {
+    const btn = e.target.closest('.wave-btn');
+    if (!btn) return;
+    document.querySelectorAll('.wave-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentWave = btn.dataset.wave;
+    activeVoices.forEach(v => {
+      v.osc1.type = currentWave;
+      v.osc2.type = currentWave;
+    });
+  });
+
+  document.getElementById('volume').addEventListener('input', (e) => {
+    if (masterGain) masterGain.gain.setTargetAtTime(parseFloat(e.target.value), audioCtx.currentTime, 0.02);
+  });
+
+  document.getElementById('cutoff').addEventListener('input', (e) => {
+    if (filterNode) filterNode.frequency.setTargetAtTime(parseFloat(e.target.value), audioCtx.currentTime, 0.02);
+  });
+
+  document.getElementById('resonance').addEventListener('input', (e) => {
+    if (filterNode) filterNode.Q.setTargetAtTime(parseFloat(e.target.value), audioCtx.currentTime, 0.02);
+  });
+
+  document.getElementById('detune').addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    activeVoices.forEach(v => {
+      v.osc1.detune.setTargetAtTime(-val, audioCtx.currentTime, 0.02);
+      v.osc2.detune.setTargetAtTime(val, audioCtx.currentTime, 0.02);
+    });
+  });
+
+  document.getElementById('delayMix').addEventListener('input', (e) => {
+    if (delayWetGain) delayWetGain.gain.setTargetAtTime(parseFloat(e.target.value), audioCtx.currentTime, 0.02);
+  });
+
+  document.getElementById('delayTime').addEventListener('input', (e) => {
+    if (delayNode) delayNode.delayTime.setTargetAtTime(parseFloat(e.target.value), audioCtx.currentTime, 0.05);
+  });
+
+  function changeOctave(delta) {
+    baseOctave = Math.min(6, Math.max(2, baseOctave + delta));
+    document.getElementById('octDisplay').textContent = `Octave: ${baseOctave}`;
+  }
+
+  document.getElementById('octDown').addEventListener('click', () => changeOctave(-1));
+  document.getElementById('octUp').addEventListener('click', () => changeOctave(1));
+
+  // Oscilloscope
+  const canvas = document.getElementById('scope');
+  const ctx = canvas.getContext('2d');
+
+  function drawIdleScope() {
+    ctx.fillStyle = scopeBgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = scopeIdleColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height / 2);
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+  }
+
+  syncThemeColors();
+
+  function drawScope() {
+    requestAnimationFrame(drawScope);
+    if (!analyser) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(dataArray);
+
+    ctx.fillStyle = scopeBgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = scopeStrokeColor;
+    ctx.shadowColor = scopeStrokeColor;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+
+    const sliceWidth = canvas.width / bufferLength;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = (v * canvas.height) / 2;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+      x += sliceWidth;
+    }
+
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Gentle Falling Snow Animation for Furry North Skin
+  const snowCanvas = document.getElementById('snowCanvas');
+  const sCtx = snowCanvas.getContext('2d');
+  let flakes = [];
+
+  function resizeSnow() {
+    snowCanvas.width = window.innerWidth;
+    snowCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeSnow);
+  resizeSnow();
+
+  for (let i = 0; i < 45; i++) {
+    flakes.push({
+      x: Math.random() * snowCanvas.width,
+      y: Math.random() * snowCanvas.height,
+      r: Math.random() * 2.5 + 1,
+      speed: Math.random() * 0.7 + 0.3,
+      drift: Math.random() * 0.6 - 0.3
+    });
+  }
+
+  function animateSnow() {
+    requestAnimationFrame(animateSnow);
+    if (document.body.dataset.skin !== 'furrynorth') return;
+    sCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+    sCtx.fillStyle = 'rgba(255, 250, 245, 0.55)';
+    sCtx.beginPath();
+    for (let f of flakes) {
+      sCtx.moveTo(f.x, f.y);
+      sCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      f.y += f.speed;
+      f.x += f.drift;
+      if (f.y > snowCanvas.height) {
+        f.y = -5;
+        f.x = Math.random() * snowCanvas.width;
+      }
+    }
+    sCtx.fill();
+  }
+  animateSnow();
+</script>
+</body>
+</html>
