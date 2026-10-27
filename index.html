@@ -601,6 +601,84 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
   .sp-presets { grid-column: 1 / -1; max-height: 200px; }
   .sp-macros { display: none; }
 }
+
+/* =====================================================================
+   v2.1 Play tab: sound | scope | perform | beat
+   ===================================================================== */
+.panel-play { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.15fr) minmax(230px, 0.8fr); gap: 10px; }
+.beat-card .sq-btn { width: 38px; height: 38px; } .beat-card .play-btn { width: 46px; height: 46px; } .beat-card .bpm { min-width: 44px; }
+.sound-card { flex-direction: column; align-items: stretch; justify-content: space-between; gap: 8px; }
+.sc-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sc-head .link-btn { min-height: 28px; font-size: 13px; }
+.sc-name { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.sc-name .sound-name { flex: 1; min-width: 0; text-align: center; font-size: 22px; }
+.nav-btn { flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); font-size: 20px; line-height: 1; color: var(--text); }
+.nav-btn:active { background: var(--accent2); color: var(--on-accent2); }
+.sound-card .knobs { justify-content: space-around; gap: 8px; }
+.sound-card .knob-wrap { --ks: 56px; }
+.scope-box { overflow: hidden; border-radius: 8px; }
+.chord-name { position: absolute; right: 8px; bottom: 4px; font-family: var(--font-display); font-style: var(--display-style); font-weight: 800; font-size: 40px; line-height: 1; color: var(--scope-line); opacity: 0.9; pointer-events: none; text-shadow: 0 2px 10px var(--scope-bg); }
+:root[data-skin="vintage"] .chord-name { color: #1b1714; text-shadow: none; }
+.perform-card { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
+.perform-card.live { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent2) 55%, transparent); }
+.pf-row { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pf-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.pf-mini { height: 20px; padding: 0 7px; border-radius: 6px; border: 1px solid var(--line); font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); }
+.pf-seg { width: 100%; }
+.pf-seg button { flex: 1; min-width: 0; padding: 0 4px; height: 32px; font-size: 12px; }
+.pf-scale { display: flex; align-items: center; gap: 6px; }
+.pf-scale .pf-step { width: 32px; height: 32px; font-size: 17px; border-radius: 9px; }
+.pf-scale-name { flex: 1; min-width: 0; text-align: center; font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-scale-name.on { color: var(--text); }
+.beat-card .row { min-width: 0; }
+.beat-card .pill { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* scale guide on the keyboard */
+.keyboard.scaled .kw:not(.in-scale) { background: color-mix(in srgb, var(--key-w) 72%, var(--key-w-edge)); color: color-mix(in srgb, var(--key-label) 55%, transparent); }
+.keyboard.scaled .kb:not(.in-scale) { filter: brightness(0.55); }
+.keyboard.scaled .kw.in-scale::before, .keyboard.scaled .kb.in-scale::before { content: ""; position: absolute; left: 50%; bottom: 26%; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: var(--accent2); opacity: 0.45; pointer-events: none; }
+.keyboard.scaled .kb.in-scale::before { bottom: 14%; width: 6px; height: 6px; margin-left: -3px; }
+.keyboard.scaled .scale-root::before { background: var(--accent) !important; width: 10px !important; height: 10px !important; margin-left: -5px !important; opacity: 1 !important; }
+.keyboard.scaled .kw.on:not(.in-scale), .keyboard.scaled .kb.on:not(.in-scale) { filter: none; }
+.keyboard.scaled .kw.on { background: var(--key-w-on); }
+
+.app.sound-open .keyboard.scaled .in-scale::before { display: none; }
+/* category dropdown (phones) */
+.sp-cat-sel { display: none; flex: none; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); font-size: 12px; font-weight: 700; padding: 0 6px; }
+
+@media (min-height: 700px) and (min-width: 1000px) {
+  .sc-name .sound-name { font-size: 26px; }
+  .sound-card .knob-wrap { --ks: 66px; }
+  .chord-name { font-size: 56px; }
+  .pf-seg button { height: 38px; font-size: 13px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .panel-play { gap: 6px; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.85fr) minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  .sound-card { gap: 4px; }
+  .sc-head .link-btn { min-height: 22px; font-size: 11px; }
+  .sc-name { gap: 4px; } .sc-name .sound-name { font-size: 15px; display: block; white-space: nowrap; -webkit-line-clamp: unset; }
+  .nav-btn { width: 28px; height: 28px; font-size: 16px; border-radius: 8px; }
+  .sound-card .knob-wrap { --ks: 40px; } .sound-card .knob-name { font-size: 10px; }
+  .chord-name { font-size: 28px; right: 6px; bottom: 2px; }
+  .perform-card { gap: 3px; }
+  .pf-row { gap: 2px; }
+  .pf-seg { padding: 2px; gap: 2px; border-radius: 8px; }
+  .pf-seg button { height: 24px; font-size: 10.5px; border-radius: 6px; padding: 0 2px; }
+  .pf-mini { height: 16px; font-size: 9px; padding: 0 5px; }
+  .pf-scale .pf-step { width: 26px; height: 24px; font-size: 14px; border-radius: 7px; }
+  .pf-scale-name { font-size: 11.5px; }
+  .beat-card .row { gap: 4px; }
+  .beat-card .play-btn { width: 30px; height: 30px; }
+  .beat-card .sq-btn { width: 26px; height: 26px; }
+  .sp-cats { display: none; }
+  .sp-cat-sel { display: block; width: 100%; height: 24px; font-size: 11px; }
+  .keyboard.scaled .kw.in-scale::before { width: 6px; height: 6px; margin-left: -3px; bottom: 30%; }
+  .keyboard.scaled .scale-root::before { width: 8px !important; height: 8px !important; margin-left: -4px !important; }
+}
+@media (orientation: portrait) and (max-width: 760px) {
+  .panel-play { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto; }
+  .perform-card { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
@@ -623,7 +701,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
       </div>
       <div class="logo logo-neon"><span class="neon-name">Best T</span><span class="neon-sub">POLY SYNTH</span></div>
       <div class="logo logo-plate"><span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span><span class="plate-name">BEST T</span><span class="plate-sub">MODEL BT-1</span></div>
-      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.0</span></div>
+      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.1</span></div>
     </div>
 
     <nav class="tabs" role="tablist" aria-label="Mode">
@@ -651,16 +729,38 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
     <!-- PLAY -->
     <section class="panel panel-play" data-panel="play">
       <div class="card sound-card">
-        <div class="sound-name-col">
+        <div class="sc-head">
           <span class="label">Sound</span>
+          <button class="link-btn" id="openSound">Edit →</button>
+        </div>
+        <div class="sc-name">
+          <button class="nav-btn" id="prevSound" aria-label="Previous sound">‹</button>
           <span class="sound-name" id="soundName">Warm Pad</span>
-          <button class="link-btn" id="openSound">Change sound →</button>
+          <button class="nav-btn" id="nextSound" aria-label="Next sound">›</button>
         </div>
         <div class="knobs" id="playKnobs"></div>
       </div>
       <div class="card scope-card">
         <div class="scope-head"><span class="label" id="scopeLabel">Scope</span><span class="label" id="notesLabel">Play a key</span></div>
-        <div class="scope-box"><canvas id="scope"></canvas></div>
+        <div class="scope-box"><canvas id="scope"></canvas><div class="chord-name" id="chordName" aria-live="polite"></div></div>
+      </div>
+      <div class="card perform-card">
+        <div class="pf-row">
+          <div class="pf-label"><span class="label">Chords</span></div>
+          <div class="seg pf-seg" id="chordSeg" role="group" aria-label="Chord mode"></div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-label"><span class="label">Arp</span><button class="pf-mini" id="arpRate" aria-label="Arpeggio speed">1/16</button></div>
+          <div class="seg pf-seg" id="arpSeg" role="group" aria-label="Arpeggiator"></div>
+        </div>
+        <div class="pf-row">
+          <div class="pf-label"><span class="label">Scale</span></div>
+          <div class="pf-scale">
+            <button class="sq-btn pf-step" data-scale="-1" aria-label="Previous scale">‹</button>
+            <span class="pf-scale-name" id="scaleName">Off</span>
+            <button class="sq-btn pf-step" data-scale="1" aria-label="Next scale">›</button>
+          </div>
+        </div>
       </div>
       <div class="card beat-card">
         <div class="row">
@@ -668,7 +768,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
           <button class="pill" id="beatNameBtn">Lo-Fi Chill</button>
         </div>
         <div class="row">
-          <div class="row" style="gap:6px">
+          <div class="row" style="gap:4px">
             <button class="sq-btn" data-bpm="-5" aria-label="Slower">−</button>
             <div class="bpm"><b id="bpmMini">85</b><small>BPM</small></div>
             <button class="sq-btn" data-bpm="5" aria-label="Faster">+</button>
@@ -793,6 +893,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
       <div class="sp-body">
         <section class="sp-col sp-presets">
           <div class="chips sp-cats" id="presetCats"></div>
+          <select class="sp-cat-sel" id="presetCatSel" aria-label="Sound category"></select>
           <div class="presets" id="presetList"></div>
           <div class="name-row" id="presetNameRow" hidden>
             <input class="text-in" id="presetNameIn" maxlength="24" placeholder="Name your sound" aria-label="Preset name">
@@ -853,7 +954,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="skinSheetTitle" style="max-width:760px">
     <div class="sheet-head"><h2 id="skinSheetTitle">Skins</h2><button class="btn" data-close>Close</button></div>
     <div class="skins" id="skinList"></div>
-    <p class="note">Best T <span class="app-ver">v2.0</span></p>
+    <p class="note">Best T <span class="app-ver">v2.1</span></p>
   </div>
 </div>
 
@@ -862,7 +963,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '2.0';
+const APP_VERSION = '2.1';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1304,6 +1405,7 @@ function buildKeyboard() {
   voices.forEach((_, s) => { if (!sustained.has(s)) setKey(s, true); });
   guideSemis.forEach(s => { const el = keyEls.get(s); if (el) el.classList.add('guide'); });
   $('#winGroup').hidden = kbCount >= MAX_WHITE;
+  if (typeof applyScaleKeys === 'function') applyScaleKeys();
   rectsDirty = true;
 }
 function layoutKeyboard() {
@@ -1335,17 +1437,17 @@ kbEl.addEventListener('pointerdown', e => {
   try { kbEl.setPointerCapture(e.pointerId); } catch (err) {}
   const s = semiAt(e.clientX, e.clientY);
   pointers.set(e.pointerId, s);
-  if (s !== null) noteOn(s);
+  if (s !== null) press(s);
 });
 kbEl.addEventListener('pointermove', e => {
   if (!pointers.has(e.pointerId)) return;
   const prev = pointers.get(e.pointerId), cur = semiAt(e.clientX, e.clientY);
   if (cur === prev) return;
-  if (prev !== null) noteOff(prev);
-  if (cur !== null) noteOn(cur);
+  if (prev !== null) release(prev);
+  if (cur !== null) press(cur);
   pointers.set(e.pointerId, cur);
 });
-const endPtr = e => { if (!pointers.has(e.pointerId)) return; const s = pointers.get(e.pointerId); pointers.delete(e.pointerId); if (s !== null) noteOff(s); };
+const endPtr = e => { if (!pointers.has(e.pointerId)) return; const s = pointers.get(e.pointerId); pointers.delete(e.pointerId); if (s !== null) release(s); };
 kbEl.addEventListener('pointerup', endPtr); kbEl.addEventListener('pointercancel', endPtr);
 kbEl.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -1358,13 +1460,13 @@ window.addEventListener('keydown', e => {
   if (e.repeat) return;
   if (k === 'z') { changeOctave(-1); return; }
   if (k === 'x') { changeOctave(1); return; }
-  if (KEYMAP[k] !== undefined && !downKeys.has(k)) { downKeys.add(k); noteOn(KEYMAP[k]); }
+  if (KEYMAP[k] !== undefined && !downKeys.has(k)) { downKeys.add(k); press(KEYMAP[k]); }
 });
 window.addEventListener('keyup', e => {
   const k = e.key.toLowerCase();
-  if (downKeys.has(k)) { downKeys.delete(k); noteOff(KEYMAP[k]); }
+  if (downKeys.has(k)) { downKeys.delete(k); release(KEYMAP[k]); }
 });
-window.addEventListener('blur', () => { downKeys.forEach(k => noteOff(KEYMAP[k])); downKeys.clear(); });
+window.addEventListener('blur', () => { downKeys.forEach(k => release(KEYMAP[k])); downKeys.clear(); });
 
 function changeOctave(d) {
   baseOctave = clamp(baseOctave + d, 2, 6);
@@ -1381,8 +1483,172 @@ $('#miniSus').addEventListener('click', () => { const c = $('#sustain'); c.check
 $('#sustain').addEventListener('change', e => {
   $('#miniSus').setAttribute('aria-pressed', String(e.target.checked));
   sustainOn = e.target.checked;
-  if (!sustainOn) Array.from(sustained).forEach(s => releaseVoice(s));
+  if (!sustainOn) { Array.from(sustained).forEach(s => releaseVoice(s)); latched.clear(); }
 });
+
+/* =========================================================
+   PERFORM: chords, arpeggiator, scale guide
+   ========================================================= */
+const SCALES = [
+  { id: 'off', name: 'Off' },
+  { id: 'cmaj', name: 'C major', root: 0, iv: [0, 2, 4, 5, 7, 9, 11] },
+  { id: 'gmaj', name: 'G major', root: 7, iv: [0, 2, 4, 5, 7, 9, 11] },
+  { id: 'fmaj', name: 'F major', root: 5, iv: [0, 2, 4, 5, 7, 9, 11] },
+  { id: 'amin', name: 'A minor', root: 9, iv: [0, 2, 3, 5, 7, 8, 10] },
+  { id: 'dmin', name: 'D minor', root: 2, iv: [0, 2, 3, 5, 7, 8, 10] },
+  { id: 'cpent', name: 'C pentatonic', root: 0, iv: [0, 2, 4, 7, 9] },
+  { id: 'apent', name: 'A minor pent.', root: 9, iv: [0, 3, 5, 7, 10] },
+  { id: 'ablues', name: 'A blues', root: 9, iv: [0, 3, 5, 6, 7, 10] },
+  { id: 'cdor', name: 'D dorian', root: 2, iv: [0, 2, 3, 5, 7, 9, 10] }
+];
+const CHORD_MODES = [['off', 'Off'], ['maj', 'Maj'], ['min', 'Min'], ['7', '7th'], ['key', 'In key']];
+const ARP_MODES = [['off', 'Off'], ['up', 'Up'], ['down', 'Down'], ['bounce', 'Up-Dn']];
+const SHAPES = { maj: [0, 4, 7], min: [0, 3, 7], '7': [0, 4, 7, 10] };
+const perf = Object.assign({ chord: 'off', arp: 'off', rate: 16, scale: 'off' }, store.get('bt_perf', {}));
+const savePerf = () => store.set('bt_perf', perf);
+const scaleObj = () => SCALES.find(x => x.id === perf.scale) || SCALES[0];
+const pcOf = s => ((s % 12) + 12) % 12;
+function inScale(s, sc) { sc = sc || scaleObj(); return !!sc.iv && sc.iv.includes((pcOf(s) - sc.root + 12) % 12); }
+function chordFor(s) {
+  if (perf.chord === 'off') return [s];
+  if (perf.chord !== 'key') return SHAPES[perf.chord].map(i => s + i);
+  const sc = scaleObj().iv ? scaleObj() : SCALES[1];
+  const rel = (pcOf(s) - sc.root + 12) % 12, deg = sc.iv.indexOf(rel);
+  if (deg < 0) return SHAPES.maj.map(i => s + i);
+  const base = s - rel, n = sc.iv.length;
+  return [0, 2, 4].map(k => base + sc.iv[(deg + k) % n] + 12 * Math.floor((deg + k) / n));
+}
+const held = new Map();       // key the player is holding -> notes it triggers
+const latched = new Set();    // arp notes kept by sustain after release
+const performing = () => tab !== 'learn';
+function press(s) {
+  if (!performing()) { noteOn(s); return; }
+  if (held.has(s)) release(s);
+  const notes = chordFor(s);
+  if (perf.arp !== 'off') {
+    if (!held.size && latched.size) latched.clear();
+    held.set(s, notes); setKey(s, true); arpStart();
+    return;
+  }
+  held.set(s, notes);
+  notes.forEach(n => noteOn(n));
+}
+function release(s) {
+  if (!held.has(s)) { noteOff(s); return; }
+  const notes = held.get(s); held.delete(s);
+  if (perf.arp !== 'off') {
+    if (sustainOn) notes.forEach(n => latched.add(n));
+    if (!voices.has(s)) setKey(s, false);
+    return;
+  }
+  notes.forEach(n => noteOff(n));
+}
+let arpTimer = null, arpIdx = 0, arpCur = null, arpGate = null;
+function arpPool() {
+  const set = new Set(); held.forEach(ns => ns.forEach(n => set.add(n))); latched.forEach(n => set.add(n));
+  return Array.from(set).sort((a, b) => a - b);
+}
+const arpStepSec = () => 60 / beat.bpm / (perf.rate / 4);
+function arpDelayMs() {
+  const step = arpStepSec();
+  if (beat.playing && ctx) {   // lock to the drum clock
+    let t = beat.next; while (t - step > ctx.currentTime + 0.002) t -= step;
+    return Math.max(0, (t - ctx.currentTime) * 1000);
+  }
+  return step * 1000;
+}
+function arpTick() {
+  arpTimer = null;
+  const pool = arpPool();
+  if (!pool.length || perf.arp === 'off' || !performing()) { arpStop(); return; }
+  let seq = pool;
+  if (perf.arp === 'down') seq = pool.slice().reverse();
+  else if (perf.arp === 'bounce' && pool.length > 2) seq = pool.concat(pool.slice(1, -1).reverse());
+  const n = seq[arpIdx % seq.length]; arpIdx++;
+  if (arpCur !== null) noteOff(arpCur, true);
+  noteOn(n, true); arpCur = n;
+  clearTimeout(arpGate);
+  arpGate = setTimeout(() => { if (arpCur === n) { noteOff(n, true); arpCur = null; held.forEach((_, k) => setKey(k, true)); } }, arpStepSec() * 800);
+  arpTimer = setTimeout(arpTick, Math.max(20, arpDelayMs()));
+}
+function arpStart() {
+  if (arpTimer) return;
+  ensureAudio(); arpIdx = 0;
+  arpTimer = setTimeout(arpTick, beat.playing ? arpDelayMs() : 0);
+}
+function arpStop() {
+  clearTimeout(arpTimer); clearTimeout(arpGate); arpTimer = null;
+  if (arpCur !== null) { noteOff(arpCur, true); arpCur = null; }
+}
+function perfReset() { arpStop(); latched.clear(); held.forEach((ns, k) => { ns.forEach(n => noteOff(n, true)); setKey(k, false); }); held.clear(); }
+function applyScaleKeys() {
+  const sc = scaleObj();
+  const on = !!sc.iv && tab !== 'learn';
+  kbEl.classList.toggle('scaled', on);
+  keyEls.forEach((el, s) => {
+    el.classList.toggle('in-scale', on && inScale(s, sc));
+    el.classList.toggle('scale-root', on && pcOf(s) === sc.root);
+  });
+}
+function segButtons(host, items, cur, onPick) {
+  host.innerHTML = '';
+  items.forEach(([v, label]) => {
+    const b = document.createElement('button'); b.textContent = label; b.dataset.v = v;
+    b.setAttribute('aria-pressed', String(v === cur));
+    b.addEventListener('click', () => onPick(v));
+    host.appendChild(b);
+  });
+}
+function renderPerform() {
+  segButtons($('#chordSeg'), CHORD_MODES, perf.chord, v => { perfReset(); perf.chord = v; savePerf(); renderPerform(); if (v !== 'off') demoPerform(); });
+  segButtons($('#arpSeg'), ARP_MODES, perf.arp, v => { perfReset(); perf.arp = v; savePerf(); renderPerform(); });
+  $('#arpRate').textContent = '1/' + perf.rate;
+  const sc = scaleObj();
+  $('#scaleName').textContent = sc.name;
+  $('#scaleName').classList.toggle('on', !!sc.iv);
+  $('.perform-card').classList.toggle('live', perf.chord !== 'off' || perf.arp !== 'off' || !!sc.iv);
+  applyScaleKeys();
+}
+function demoPerform() {
+  if (perf.arp !== 'off') return;
+  const root = 12; const notes = chordFor(root);
+  if (held.size) return;
+  ensureAudio(); notes.forEach(n => noteOn(n, true));
+  setTimeout(() => { const busy = new Set(); held.forEach(ns => ns.forEach(x => busy.add(x))); notes.forEach(n => { if (!busy.has(n)) noteOff(n, true); }); }, 450);
+}
+$('#arpRate').addEventListener('click', () => { perf.rate = perf.rate === 16 ? 8 : 16; savePerf(); renderPerform(); });
+$$('[data-scale]').forEach(b => b.addEventListener('click', () => {
+  const i = SCALES.findIndex(x => x.id === perf.scale);
+  perf.scale = SCALES[(i + parseInt(b.dataset.scale, 10) + SCALES.length) % SCALES.length].id;
+  savePerf(); renderPerform();
+}));
+
+/* chord naming for the scope */
+const CHORD_TPL = [[[0, 4, 7], ''], [[0, 3, 7], 'm'], [[0, 4, 7, 10], '7'], [[0, 4, 7, 11], 'maj7'], [[0, 3, 7, 10], 'm7'], [[0, 3, 6], 'dim'], [[0, 3, 6, 9], 'dim7'], [[0, 3, 6, 10], 'm7♭5'], [[0, 4, 8], 'aug'], [[0, 2, 7], 'sus2'], [[0, 5, 7], 'sus4'], [[0, 7], '5'], [[0, 4, 7, 9], '6'], [[0, 3, 7, 9], 'm6'], [[0, 4, 7, 14 - 12], 'add9']];
+function chordNameOf(semis) {
+  if (!semis.length) return '';
+  const pcs = Array.from(new Set(semis.map(pcOf)));
+  const nm = pc => NOTE_NAMES[pc];
+  if (pcs.length === 1) return nm(pcs[0]);
+  const bass = pcOf(Math.min(...semis));
+  const roots = [bass].concat(pcs.filter(p => p !== bass));
+  for (const r of roots) {
+    const rel = pcs.map(p => (p - r + 12) % 12).sort((a, b) => a - b).join(',');
+    const hit = CHORD_TPL.find(([t]) => t.slice().sort((a, b) => a - b).join(',') === rel);
+    if (hit) return nm(r) + hit[1] + (r !== bass ? '/' + nm(bass) : '');
+  }
+  return '';
+}
+
+/* sound browsing straight from the Play tab */
+function stepSound(d) {
+  const list = allPresets(); if (!list.length) return;
+  const i = basePreset && basePreset.id ? list.findIndex(p => p.id === basePreset.id) : -1;
+  loadPreset(list[((i < 0 ? (d > 0 ? -1 : 0) : i) + d + list.length) % list.length]);
+}
+$('#prevSound').addEventListener('click', () => stepSound(-1));
+$('#nextSound').addEventListener('click', () => stepSound(1));
+
 
 /* =========================================================
    KNOBS & MACROS
@@ -1513,6 +1779,8 @@ function renderPresets() {
     b.addEventListener('click', () => { presetCat = c; renderPresets(); });
     catHost.appendChild(b);
   });
+  const sel = $('#presetCatSel'); sel.innerHTML = '';
+  cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c === 'All' ? 'All sounds' : c; o.selected = c === presetCat; sel.appendChild(o); });
   const host = $('#presetList'); host.innerHTML = '';
   const list = allPresets().filter(p => presetCat === 'All' || p.cat === presetCat);
   if (!list.length) { host.innerHTML = '<p class="empty">No saved sounds yet. Shape a sound, then tap Save as my sound.</p>'; return; }
@@ -1561,6 +1829,7 @@ function previewSoon(envChanged) {
 }
 function previewChord() { previewPhrase(true); }
 function placeSoundSheet() { /* sound panel is laid out by CSS inside .app */ }
+$('#presetCatSel').addEventListener('change', e => { presetCat = e.target.value; renderPresets(); });
 $('#resetPreset').addEventListener('click', () => loadPreset(basePreset || PRESETS[0]));
 $('#savePreset').addEventListener('click', () => { $('#presetNameRow').hidden = false; $('#presetNameIn').value = ''; $('#presetNameIn').focus(); });
 $('#presetNameSave').addEventListener('click', () => {
@@ -1647,6 +1916,7 @@ $('#skinBtn').addEventListener('click', () => { renderSkins(); openSheet('#skinS
    ========================================================= */
 let tab = 'play';
 function setTab(t) {
+  if (t !== tab) perfReset();
   tab = t; app.dataset.tab = t;
   $$('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
   $$('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== t; });
@@ -1657,6 +1927,7 @@ function setTab(t) {
   }
   if (t === 'learn' && !L.song) selectSong(SONGS[0], true);
   if (t !== 'learn') setGuide([]); else updateGuide();
+  applyScaleKeys();
   requestAnimationFrame(() => { layoutKeyboard(); sizeCanvases(); });
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
@@ -2246,7 +2517,10 @@ let notesLabelDirty = true;
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 function updateNotesLabel() {
   if (!notesLabelDirty) return; notesLabelDirty = false;
-  const held = Array.from(voices.keys()).filter(s => !sustained.has(s)).sort((a, b) => a - b).slice(0, 4);
+  const sounding = Array.from(voices.keys()).sort((a, b) => a - b);
+  const cn = chordNameOf(sounding);
+  const cEl = $('#chordName'); if (cEl.textContent !== cn) cEl.textContent = cn;
+  const held = sounding.filter(s => !sustained.has(s)).slice(0, 4);
   $('#notesLabel').textContent = held.length ? held.map(s => NOTE_NAMES[((s % 12) + 12) % 12] + (baseOctave + Math.floor(s / 12))).join(' · ') : (ctx ? patch.wave.replace('sawtooth', 'saw') : 'Play a key');
 }
 
@@ -2272,7 +2546,7 @@ const onOrient = () => { if (portraitQ.matches) { stopHold(); allNotesOff(); if 
 if (portraitQ.addEventListener) portraitQ.addEventListener('change', onOrient); else if (portraitQ.addListener) portraitQ.addListener(onOrient);
 document.addEventListener('pointerdown', () => { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }, { once: true });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { learnPause(); stopHold(); allNotesOff(); }
+  if (document.hidden) { learnPause(); stopHold(); perfReset(); allNotesOff(); }
   else if (ctx && ctx.state !== 'running') ctx.resume();
 });
 document.addEventListener('gesturestart', e => e.preventDefault());
@@ -2301,6 +2575,7 @@ setSkin(skin);
 loadBeat(beat.id);
 syncControls();
 renderPresets();
+renderPerform();
 setMode('wait');
 layoutKeyboard(); buildKeyboard();
 sizeCanvases();
