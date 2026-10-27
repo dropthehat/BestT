@@ -68,7 +68,7 @@ html { height: 100%; box-sizing: border-box; background: var(--bg); padding-top:
 body {
   margin: 0; height: 100%; overflow: hidden;
   background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 14px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-left: var(--sl, max(16px, env(safe-area-inset-left, 0px))); padding-right: var(--sr, max(16px, env(safe-area-inset-right, 0px)));
   padding-block: 12px;
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
   touch-action: manipulation; transition: background 0.3s ease;
@@ -184,7 +184,9 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 .bpm b { font-family: var(--font-mono); font-size: 24px; line-height: 1; font-variant-numeric: tabular-nums; }
 .bpm small { font-size: 11px; color: var(--muted); }
 .play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; flex: none; }
-.play-btn.on { box-shadow: 0 0 16px var(--accent); }
+/* playing state stays inside the button so no container ever crops it */
+.play-btn.on { box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--on-accent) 45%, transparent); animation: beatPulse 0.6s ease-in-out infinite alternate; }
+@keyframes beatPulse { to { filter: brightness(1.12); } }
 .steps { display: grid; grid-template-columns: repeat(var(--n, 16), minmax(0, 1fr)); gap: 4px; }
 .steps span { height: 6px; border-radius: 3px; background: var(--track); }
 .steps span.beat1 { background: color-mix(in srgb, var(--text) 30%, transparent); }
@@ -226,26 +228,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 .results-row { display: flex; gap: 22px; }
 
 /* Beats */
-.panel-beats { display: flex; flex-direction: column; gap: 10px; overflow: auto; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.beat-top { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; position: sticky; top: 0; z-index: 2; background: var(--chassis); padding-bottom: 4px; }
-.beat-top .beat-chips { flex: 1 1 100%; order: 10; min-width: 0; }
-.beat-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
-.beat-chips::-webkit-scrollbar { display: none; }
-.beat-chips .pill { flex: none; }
-.beat-top input[type="range"] { flex: 1; min-width: 120px; }
-.drum-vol { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
-.drum-vol output { font-family: var(--font-mono); font-weight: 500; color: var(--text); }
-.beat-top .drum-vol input[type="range"] { flex: none; width: 130px; min-width: 0; }
-.grid-rows { flex: 1 1 auto; min-height: 0; max-height: 300px; display: grid; grid-template-rows: repeat(3, minmax(34px, 1fr)); gap: 6px; }
-.grid-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: stretch; gap: 8px; }
-.grid-row > span { align-self: center; }
-.grid-row > span { font-size: 13px; font-weight: 700; color: var(--muted); }
-.cells { display: grid; grid-template-columns: repeat(var(--n, 16), minmax(0, 1fr)); gap: 4px; min-height: 0; }
-.cell { height: auto; min-height: 30px; border-radius: 7px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
-.cell.b1 { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 35%, transparent); }
-.cell[aria-pressed="true"] { background: var(--accent); box-shadow: none; }
-.cell.now { outline: 2px solid var(--accent2); outline-offset: -2px; }
 
 /* Record */
 .panel-record { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; overflow: auto; }
@@ -304,33 +287,9 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 .backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .head-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .btn.hold[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); border-color: transparent; box-shadow: 0 0 12px color-mix(in srgb, var(--accent2) 60%, transparent); }
-#soundSheet { bottom: var(--sheet-bottom, 0px); background: rgba(0, 0, 0, 0.35); }
-.wave.layer { height: 36px; font-size: 12px; }
 .sheet { width: 100%; max-width: 980px; max-height: 100%; overflow: auto; background: var(--chassis); color: var(--text); border-radius: calc(var(--radius) + 4px); padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 0 0 1px var(--line), 0 30px 60px rgba(0, 0, 0, 0.5); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .sheet-head h2 { margin: 0; font-family: var(--font-display); font-style: var(--display-style); font-size: 26px; font-weight: 700; }
-.sound-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 14px; }
-.presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.preset { min-height: 56px; border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; text-align: left; background: var(--panel-2); }
-.preset[aria-pressed="true"] { background: var(--text); color: var(--chassis); }
-.preset svg { flex: none; }
-.preset .pn { font-size: 14px; font-weight: 700; display: block; }
-.preset .pc { font-size: 11px; opacity: 0.75; display: block; }
-.macro-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.macro { display: flex; align-items: center; gap: 12px; }
-.macro p { margin: 2px 0 0; font-size: 12px; color: var(--muted); line-height: 1.35; }
-.adv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.adv .card { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
-.adv h3 { margin: 0; font-size: 14px; }
-.ctl { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
-.ctl span { display: flex; justify-content: space-between; gap: 6px; }
-.ctl output { font-family: var(--font-mono); color: var(--text); font-variant-numeric: tabular-nums; }
-input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--accent2); touch-action: pan-x; }
-.waves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-.wave { height: 46px; border-radius: 10px; background: var(--panel-2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; font-weight: 700; }
-.wave[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); }
-.env-svg { width: 100%; height: 54px; display: block; }
-.sheet-foot { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .diff-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .song-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .song-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 60px; padding: 10px 14px; border-radius: 14px; background: var(--panel); text-align: left; width: 100%; }
@@ -374,7 +333,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .hud { gap: 6px; flex-wrap: nowrap; } .song-btn { min-height: 36px; padding: 2px 10px; } .song-btn .t { font-size: 15px; max-width: 180px; } .song-btn .m { display: none; } .song-btn-cta { padding: 3px 8px; font-size: 11px; }
   .stats { gap: 10px; } .stat b { font-size: 15px; } .stat small { font-size: 9px; }
   .seg button { height: 30px; padding: 0 8px; font-size: 12px; } .btn { height: 34px; padding: 0 10px; font-size: 13px; }
-  .cell { height: 24px; } .rec-big { width: 60px; height: 60px; } .rec-big span { width: 24px; height: 24px; } .rec-time { font-size: 20px; }
+  .rec-big { width: 60px; height: 60px; } .rec-big span { width: 24px; height: 24px; } .rec-time { font-size: 20px; }
   .foot { min-height: 0; } .foot .btn { height: 32px; } .toggle { min-height: 32px; }
   .kw { padding-bottom: 4px; font-size: 10px; }
 }
@@ -403,17 +362,8 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .foot { flex-wrap: wrap; justify-content: space-between; row-gap: 4px; }
   .foot .btn { padding: 0 12px; }
   .oct { min-width: 60px; }
-  .sound-grid { grid-template-columns: 1fr; }
-  .macro-row { grid-template-columns: 1fr; }
-  .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .song-list { grid-template-columns: 1fr; }
   .skins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .grid-row { grid-template-columns: 44px minmax(0, 1fr); }
-  .cells { gap: 2px; } .cell { height: 30px; border-radius: 5px; }
-}
-@media (max-width: 900px) and (orientation: landscape) {
-  .sound-grid { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
-  .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .rotate { display: none; position: fixed; inset: 0; z-index: 100; background: var(--bg); color: var(--text); flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
 .rotate-phone { width: 46px; height: 80px; border-radius: 10px; border: 3px solid var(--text); position: relative; animation: turn 2.4s ease-in-out infinite; }
@@ -469,21 +419,6 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .panel-play { gap: 6px; }
   .knob-wrap { --ks: 38px; } .knob-name { font-size: 10px; } .sound-name { font-size: 15px; } .label { font-size: 9px; }
   .beat-card .steps span { height: 3px; }
-  .panel-beats { gap: 5px; }
-  .beat-top { flex-wrap: nowrap; gap: 6px; padding-bottom: 2px; }
-  .beat-top .play-btn { width: 32px; height: 32px; }
-  .beat-top .sq-btn { width: 28px; height: 28px; font-size: 15px; border-radius: 8px; }
-  .beat-top .bpm { min-width: 30px; } .beat-top .bpm b { font-size: 15px; } .beat-top .bpm small { font-size: 8px; }
-  #bpmRange { display: none; }
-  .beat-top .beat-chips { flex: 1 1 0; order: 5; }
-  .beat-chips .pill { height: 28px; padding: 0 10px; font-size: 11px; }
-  #beatReset { order: 7; height: 28px; padding: 0 8px; font-size: 11px; border-radius: 8px; }
-  .drum-vol { order: 6; } .drum-vol span { display: none; }
-  .beat-top .drum-vol input[type="range"] { width: 64px; height: 20px; }
-  .grid-rows { gap: 3px; grid-template-rows: repeat(3, minmax(20px, 1fr)); max-height: 150px; }
-  .grid-row { grid-template-columns: 38px minmax(0, 1fr); gap: 4px; }
-  .grid-row > span { font-size: 10px; }
-  .cells { gap: 2px; } .cell { min-height: 20px; border-radius: 4px; }
   .panel-record { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 6px; }
   .rec-big { width: 48px; height: 48px; } .rec-big span { width: 20px; height: 20px; } .rec-time { font-size: 16px; }
   .take { gap: 5px; } .take .btn { height: 30px; font-size: 11px; padding: 0 8px; } .note { font-size: 11px; }
@@ -520,6 +455,152 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* =====================================================================
+   v2.0 layout: spacing tokens, Beats workspace, compact Sound panel
+   ===================================================================== */
+.app { --pad: 14px; --gap: 12px; padding: var(--pad) calc(var(--pad) + 4px); gap: var(--gap); }
+@media (pointer: coarse) { .app { --gap: 10px; } }
+@media (orientation: portrait) and (max-width: 760px) { .app { --pad: 12px; --gap: 10px; } }
+@media (max-height: 520px) and (orientation: landscape) { .app, .app[data-tab="learn"] { --pad: 6px; --gap: 6px; padding: 6px 10px; } }
+
+/* ---- Beats: style list | transport + grid ---- */
+.panel-beats { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 10px; min-height: 0; }
+.style-list { display: flex; flex-direction: column; gap: 2px; min-height: 0; overflow-y: auto; padding: 5px; border-radius: 12px; background: var(--panel); overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.style-item { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--text); text-align: left; }
+.style-item .si-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.style-item .si-bpm { font-family: var(--font-mono); font-size: 10px; color: var(--muted); flex: none; }
+.style-item:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.style-item[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); }
+.style-item[aria-pressed="true"] .si-bpm { color: inherit; opacity: 0.75; }
+.beat-main { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
+.beat-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tempo { display: flex; align-items: center; gap: 6px; flex: none; }
+#bpmRange { flex: none; width: 140px; }
+.beat-title { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+.beat-title b { font-family: var(--font-display); font-style: var(--display-style); font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.beat-title small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drum-vol { flex: none; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.drum-vol output { font-family: var(--font-mono); font-weight: 500; color: var(--text); }
+.drum-vol input[type="range"] { width: 110px; }
+#beatReset { flex: none; }
+.grid-rows { flex: 1 1 auto; min-height: 0; max-height: 320px; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.grid-row { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 6px; min-height: 0; }
+.row-lbl { align-self: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+.cells { display: grid; grid-template-columns: repeat(var(--n, 16), minmax(0, 1fr)); gap: 3px; min-height: 0; }
+.cell { height: 100%; min-height: 0; border-radius: 6px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.cell.alt { background: var(--panel-2); }
+.cell.b1 { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 30%, transparent); }
+.cell[aria-pressed="true"] { background: var(--accent); box-shadow: none; }
+.cell.now { outline: 2px solid var(--accent2); outline-offset: -2px; }
+:root[data-skin="neon"] .cell[aria-pressed="true"] { background: var(--accent); box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.35); }
+
+/* ---- Sound panel: lives inside .app, covers everything above the keyboard ---- */
+.app > .sound-panel { position: absolute; z-index: 20; inset: 0 0 auto 0; bottom: calc(var(--pad) + var(--kb-h) + var(--gap) / 2); padding: 0; background: transparent; display: block; }
+.sound-panel .sheet { width: 100%; height: 100%; max-width: none; max-height: none; overflow: hidden; border-radius: calc(var(--radius) + 8px) calc(var(--radius) + 8px) var(--radius) var(--radius); padding: 10px 12px; gap: 8px; box-shadow: 0 1px 0 var(--line), 0 10px 24px rgba(0, 0, 0, 0.25); }
+.sp-head { display: flex; align-items: center; gap: 14px; min-width: 0; flex: none; }
+.sp-title { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.sp-title h2 { margin: 0; font-family: var(--font-display); font-style: var(--display-style); font-size: 21px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-title .label { font-size: 10px; }
+.sp-macros { display: flex; gap: 14px; flex: none; }
+.sp-macros .knob-wrap { --ks: 36px; display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 7px; row-gap: 0; align-items: center; justify-items: start; }
+.sp-macros .knob { grid-row: 1 / 3; }
+.sp-macros .knob-name { font-size: 12px; align-self: end; }
+.sp-macros .knob-val { display: block; font-size: 10px; align-self: start; }
+.sound-panel .head-btns { flex: none; flex-wrap: nowrap; gap: 6px; }
+.sound-panel .head-btns .btn { height: 36px; padding: 0 12px; font-size: 13px; }
+.btn.hold[aria-pressed="true"] { box-shadow: none; }
+.sp-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(168px, 1.25fr) repeat(4, minmax(0, 1fr)); gap: 8px; }
+.sp-col { display: flex; flex-direction: column; gap: 3px; min-width: 0; min-height: 0; padding: 8px 10px; border-radius: 12px; background: var(--panel); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.sp-col::-webkit-scrollbar { display: none; }
+:root[data-skin="studio"] .sp-col { box-shadow: inset 0 0 0 1px var(--line); }
+.sp-col h3 { margin: 2px 0 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.sp-col h3:not(:first-child) { margin-top: 8px; }
+.sp-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.ctl { display: flex; flex-direction: column; gap: 0; font-size: 12px; color: var(--muted); }
+.ctl span { display: flex; justify-content: space-between; gap: 6px; white-space: nowrap; }
+.ctl output { font-family: var(--font-mono); font-size: 11px; color: var(--text); font-variant-numeric: tabular-nums; }
+.sp-col input[type="range"] { height: 24px; }
+.waves { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.wave { height: 38px; border-radius: 8px; background: var(--panel-2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 9px; font-weight: 700; min-width: 0; overflow: hidden; }
+.wave[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); }
+.waves.layers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.wave.layer { height: 26px; font-size: 11px; white-space: nowrap; }
+.env-svg { width: 100%; height: 36px; display: block; flex: none; margin-bottom: 2px; }
+.sp-presets { padding: 6px; gap: 6px; overflow: hidden; }
+.sp-cats { flex-wrap: nowrap; overflow-x: auto; gap: 4px; flex: none; scrollbar-width: none; }
+.sp-cats::-webkit-scrollbar { display: none; }
+.sp-cats .pill { height: 26px; padding: 0 9px; font-size: 11px; flex: none; }
+.presets { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.preset { flex: none; min-height: 32px; border-radius: 8px; padding: 0 8px; display: flex; align-items: center; gap: 8px; text-align: left; background: transparent; }
+.preset:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.preset[aria-pressed="true"] { background: var(--text); color: var(--chassis); }
+.preset svg { flex: none; width: 22px; height: 14px; }
+.preset > span { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.preset .pn { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preset .pc { font-size: 10px; opacity: 0.6; flex: none; }
+.sheet-foot { display: flex; gap: 4px; flex: none; }
+.sp-presets .sheet-foot .btn { flex: 1; height: 30px; padding: 0 8px; font-size: 12px; border-radius: 9px; }
+.sp-presets .name-row .text-in { height: 30px; font-size: 13px; border-radius: 9px; }
+.sp-presets .name-row .btn { height: 30px; padding: 0 10px; font-size: 12px; }
+
+/* desktop / big screens: a bit more air */
+@media (min-height: 700px) and (min-width: 1000px) {
+  .sound-panel .sheet { padding: 14px 16px; gap: 12px; }
+  .sp-col { padding: 12px 14px; gap: 6px; }
+  .sp-macros .knob-wrap { --ks: 44px; }
+  .env-svg { height: 52px; }
+  .wave { height: 46px; font-size: 10px; }
+  .style-item { min-height: 40px; }
+}
+
+/* phone landscape */
+@media (max-height: 520px) and (orientation: landscape) {
+  .panel-beats { grid-template-columns: 148px minmax(0, 1fr); gap: 6px; }
+  .style-list { padding: 3px; border-radius: 10px; }
+  .style-item { min-height: 30px; padding: 0 8px; font-size: 12px; border-radius: 7px; }
+  .beat-main { gap: 6px; }
+  .beat-top { gap: 8px; }
+  .beat-top .play-btn { width: 34px; height: 34px; }
+  .beat-top .sq-btn { width: 30px; height: 30px; font-size: 15px; border-radius: 8px; }
+  .beat-top .bpm { min-width: 30px; } .beat-top .bpm b { font-size: 16px; } .beat-top .bpm small { font-size: 8px; }
+  #bpmRange { display: none; }
+  .beat-title b { font-size: 15px; } .beat-title small { font-size: 10px; }
+  .drum-vol { gap: 4px; font-size: 11px; } .drum-vol input[type="range"] { width: 76px; height: 22px; }
+  #beatReset { height: 30px; padding: 0 10px; font-size: 12px; border-radius: 8px; }
+  .grid-rows { gap: 4px; max-height: none; }
+  .grid-row { grid-template-columns: 40px minmax(0, 1fr); gap: 4px; }
+  .row-lbl { font-size: 11px; }
+  .cells { gap: 2px; } .cell { border-radius: 5px; }
+  .sound-panel .sheet { padding: 6px 8px; gap: 6px; border-radius: 14px 14px 10px 10px; }
+  .sp-head { gap: 10px; }
+  .sp-title h2 { font-size: 16px; } .sp-title .label { display: none; }
+  .sp-macros { gap: 10px; } .sp-macros .knob-wrap { --ks: 28px; column-gap: 5px; } .sp-macros .knob-name { font-size: 10px; } .sp-macros .knob-val { font-size: 9px; }
+  .sound-panel .head-btns .btn { height: 30px; padding: 0 9px; font-size: 12px; border-radius: 9px; }
+  .sp-body { gap: 5px; grid-template-columns: minmax(150px, 1.2fr) repeat(4, minmax(0, 1fr)); }
+  .sp-col { padding: 5px 7px; gap: 1px; border-radius: 9px; }
+  .sp-col h3 { font-size: 9px; margin: 1px 0; } .sp-col h3:not(:first-child) { margin-top: 5px; }
+  .ctl { font-size: 11px; } .ctl output { font-size: 10px; }
+  .sp-col input[type="range"] { height: 20px; }
+  .wave { height: 28px; font-size: 0; } .wave svg { width: 20px; height: 13px; }
+  .wave.layer { height: 22px; font-size: 10px; }
+  .sp-sub { font-size: 10px; margin-top: 2px; }
+  .env-svg { height: 26px; }
+  .preset { min-height: 27px; } .preset .pn { font-size: 12px; } .preset .pc { display: none; }
+  .sp-cats .pill { height: 24px; padding: 0 8px; font-size: 10px; }
+  .sp-presets .sheet-foot .btn { height: 26px; font-size: 11px; }
+}
+
+/* narrow portrait (desktop window): stack */
+@media (orientation: portrait) and (max-width: 760px) {
+  .panel-beats { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .style-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+  .beat-top { flex-wrap: wrap; }
+  #bpmRange { display: none; }
+  .sp-body { grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-y: auto; }
+  .sp-presets { grid-column: 1 / -1; max-height: 200px; }
+  .sp-macros { display: none; }
+}
 </style>
 </head>
 <body>
@@ -542,7 +623,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
       </div>
       <div class="logo logo-neon"><span class="neon-name">Best T</span><span class="neon-sub">POLY SYNTH</span></div>
       <div class="logo logo-plate"><span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span><span class="plate-name">BEST T</span><span class="plate-sub">MODEL BT-1</span></div>
-      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v1.14</span></div>
+      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.0</span></div>
     </div>
 
     <nav class="tabs" role="tablist" aria-label="Mode">
@@ -643,17 +724,22 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 
     <!-- BEATS -->
     <section class="panel panel-beats" data-panel="beats" hidden>
-      <div class="beat-top">
-        <button class="play-btn" id="beatPlay" aria-label="Play beat"></button>
-        <button class="sq-btn" data-bpm="-5" aria-label="Slower">−</button>
-        <div class="bpm"><b id="bpmBig">85</b><small>BPM</small></div>
-        <button class="sq-btn" data-bpm="5" aria-label="Faster">+</button>
-        <input type="range" id="bpmRange" min="60" max="180" step="1" value="85" aria-label="Tempo">
-        <label class="drum-vol"><span>Drums <output id="drumVolOut">80%</output></span><input type="range" id="drumVol" min="0" max="100" value="80" aria-label="Drum volume"></label>
-        <button class="btn" id="beatReset">Reset pattern</button>
-        <div class="chips beat-chips" id="beatChips"></div>
+      <div class="style-list" id="beatChips" role="group" aria-label="Beat style"></div>
+      <div class="beat-main">
+        <div class="beat-top">
+          <button class="play-btn" id="beatPlay" aria-label="Play beat"></button>
+          <div class="tempo">
+            <button class="sq-btn" data-bpm="-5" aria-label="Slower">−</button>
+            <div class="bpm"><b id="bpmBig">85</b><small>BPM</small></div>
+            <button class="sq-btn" data-bpm="5" aria-label="Faster">+</button>
+          </div>
+          <input type="range" id="bpmRange" min="60" max="180" step="1" value="85" aria-label="Tempo">
+          <div class="beat-title"><b id="beatTitle">Lo-Fi Chill</b><small id="beatKit">Dusty tape kit</small></div>
+          <label class="drum-vol"><span>Drums <output id="drumVolOut">80%</output></span><input type="range" id="drumVol" min="0" max="100" value="80" aria-label="Drum volume"></label>
+          <button class="btn" id="beatReset">Reset</button>
+        </div>
+        <div class="grid-rows" id="beatGrid"></div>
       </div>
-      <div class="grid-rows" id="beatGrid"></div>
     </section>
 
     <!-- RECORD -->
@@ -696,62 +782,62 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
     <span class="hint">Play with A S D F on your keyboard · Z and X change octave</span>
     <label class="toggle"><input type="checkbox" id="sustain"> Sustain</label>
   </footer>
-</div>
-
-<!-- SOUND SHEET -->
-<div class="backdrop" id="soundSheet" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="soundSheetTitle">
-    <div class="sheet-head"><h2 id="soundSheetTitle">Sound</h2><div class="head-btns"><button class="btn hold" id="holdNote" aria-pressed="false">Hold note</button><button class="btn" id="hearSound">Hear it</button><button class="btn primary" data-close>Done</button></div></div>
-    <div class="sound-grid">
-      <div class="card" style="display:flex;flex-direction:column;gap:10px">
-        <div class="chips" id="presetCats"></div>
-        <div class="presets" id="presetList"></div>
-        <div class="name-row" id="presetNameRow" hidden>
-          <input class="text-in" id="presetNameIn" maxlength="24" placeholder="Name your sound" aria-label="Preset name">
-          <button class="btn primary" id="presetNameSave">Save</button>
-        </div>
-        <div class="sheet-foot">
-          <button class="btn primary" id="savePreset">Save as my sound</button>
-          <button class="btn" id="resetPreset">Reset</button>
-        </div>
+  <!-- SOUND PANEL (covers the area above the keyboard, keyboard stays playable) -->
+  <div class="backdrop sound-panel" id="soundSheet" hidden>
+    <div class="sheet" role="dialog" aria-modal="false" aria-labelledby="soundSheetTitle">
+      <div class="sp-head">
+        <div class="sp-title"><span class="label">Sound</span><h2 id="soundSheetTitle">Sound</h2></div>
+        <div class="sp-macros" id="sheetKnobs"></div>
+        <div class="head-btns"><button class="btn hold" id="holdNote" aria-pressed="false">Hold note</button><button class="btn" id="hearSound">Hear it</button><button class="btn primary" data-close>Done</button></div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
-        <div class="card macro-row" id="sheetKnobs"></div>
-        <span class="label">Advanced</span>
-        <div class="adv">
-          <div class="card">
-            <h3>Wave shape</h3>
-            <div class="waves" id="waveBtns"></div>
-            <span class="ctl"><span>Second voice</span></span>
-            <div class="waves" id="layerBtns"></div>
-            <label class="ctl"><span>Thickness <output id="o-detune"></output></span><input type="range" id="p-detune" min="0" max="1000"></label>
+      <div class="sp-body">
+        <section class="sp-col sp-presets">
+          <div class="chips sp-cats" id="presetCats"></div>
+          <div class="presets" id="presetList"></div>
+          <div class="name-row" id="presetNameRow" hidden>
+            <input class="text-in" id="presetNameIn" maxlength="24" placeholder="Name your sound" aria-label="Preset name">
+            <button class="btn primary" id="presetNameSave">Save</button>
           </div>
-          <div class="card">
-            <h3>Tone</h3>
-            <label class="ctl"><span>Cutoff <output id="o-cutoff"></output></span><input type="range" id="p-cutoff" min="0" max="1000"></label>
-            <label class="ctl"><span>Resonance <output id="o-reso"></output></span><input type="range" id="p-reso" min="0" max="1000"></label>
-            <label class="ctl"><span>Volume <output id="o-volume"></output></span><input type="range" id="p-volume" min="0" max="1000"></label>
+          <div class="sheet-foot">
+            <button class="btn primary" id="savePreset">Save as mine</button>
+            <button class="btn" id="resetPreset">Reset</button>
           </div>
-          <div class="card">
-            <h3>Shape over time</h3>
-            <svg class="env-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path id="envFill" fill="color-mix(in srgb, var(--accent) 25%, transparent)"/><path id="envLine" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/></svg>
-            <label class="ctl"><span>Attack <output id="o-attack"></output></span><input type="range" id="p-attack" min="0" max="1000"></label>
-            <label class="ctl"><span>Decay <output id="o-decay"></output></span><input type="range" id="p-decay" min="0" max="1000"></label>
-            <label class="ctl"><span>Hold level <output id="o-sustain"></output></span><input type="range" id="p-sustain" min="0" max="1000"></label>
-            <label class="ctl"><span>Fade out <output id="o-release"></output></span><input type="range" id="p-release" min="0" max="1000"></label>
-          </div>
-          <div class="card">
-            <h3>Echo and wobble</h3>
-            <label class="ctl"><span>Echo amount <output id="o-delayMix"></output></span><input type="range" id="p-delayMix" min="0" max="1000"></label>
-            <label class="ctl"><span>Echo gap <output id="o-delayTime"></output></span><input type="range" id="p-delayTime" min="0" max="1000"></label>
-            <label class="ctl"><span>Repeats <output id="o-feedback"></output></span><input type="range" id="p-feedback" min="0" max="1000"></label>
-            <label class="ctl"><span>Wobble speed <output id="o-lfoRate"></output></span><input type="range" id="p-lfoRate" min="0" max="1000"></label>
-          </div>
-        </div>
+        </section>
+        <section class="sp-col">
+          <h3>Oscillator</h3>
+          <div class="waves" id="waveBtns"></div>
+          <span class="sp-sub">Second voice</span>
+          <div class="waves layers" id="layerBtns"></div>
+          <label class="ctl"><span>Thickness <output id="o-detune"></output></span><input type="range" id="p-detune" min="0" max="1000"></label>
+        </section>
+        <section class="sp-col">
+          <h3>Filter</h3>
+          <label class="ctl"><span>Cutoff <output id="o-cutoff"></output></span><input type="range" id="p-cutoff" min="0" max="1000"></label>
+          <label class="ctl"><span>Resonance <output id="o-reso"></output></span><input type="range" id="p-reso" min="0" max="1000"></label>
+          <h3>Wobble</h3>
+          <label class="ctl"><span>Speed <output id="o-lfoRate"></output></span><input type="range" id="p-lfoRate" min="0" max="1000"></label>
+        </section>
+        <section class="sp-col">
+          <h3>Envelope</h3>
+          <svg class="env-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path id="envFill" fill="color-mix(in srgb, var(--accent) 25%, transparent)"/><path id="envLine" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+          <label class="ctl"><span>Attack <output id="o-attack"></output></span><input type="range" id="p-attack" min="0" max="1000"></label>
+          <label class="ctl"><span>Decay <output id="o-decay"></output></span><input type="range" id="p-decay" min="0" max="1000"></label>
+          <label class="ctl"><span>Hold level <output id="o-sustain"></output></span><input type="range" id="p-sustain" min="0" max="1000"></label>
+          <label class="ctl"><span>Fade out <output id="o-release"></output></span><input type="range" id="p-release" min="0" max="1000"></label>
+        </section>
+        <section class="sp-col">
+          <h3>Echo</h3>
+          <label class="ctl"><span>Amount <output id="o-delayMix"></output></span><input type="range" id="p-delayMix" min="0" max="1000"></label>
+          <label class="ctl"><span>Gap <output id="o-delayTime"></output></span><input type="range" id="p-delayTime" min="0" max="1000"></label>
+          <label class="ctl"><span>Repeats <output id="o-feedback"></output></span><input type="range" id="p-feedback" min="0" max="1000"></label>
+          <h3>Output</h3>
+          <label class="ctl"><span>Volume <output id="o-volume"></output></span><input type="range" id="p-volume" min="0" max="1000"></label>
+        </section>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- SONG SHEET -->
 <div class="backdrop" id="songSheet" hidden>
@@ -767,7 +853,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="skinSheetTitle" style="max-width:760px">
     <div class="sheet-head"><h2 id="skinSheetTitle">Skins</h2><button class="btn" data-close>Close</button></div>
     <div class="skins" id="skinList"></div>
-    <p class="note">Best T <span class="app-ver">v1.14</span></p>
+    <p class="note">Best T <span class="app-ver">v2.0</span></p>
   </div>
 </div>
 
@@ -776,7 +862,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '1.14';
+const APP_VERSION = '2.0';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1349,7 +1435,7 @@ function syncKnobs() {
   });
 }
 ['bright', 'space', 'wobble'].forEach(k => makeKnob(k, $('#playKnobs'), false));
-['bright', 'space', 'wobble'].forEach(k => makeKnob(k, $('#sheetKnobs'), true));
+['bright', 'space', 'wobble'].forEach(k => makeKnob(k, $('#sheetKnobs'), false));
 
 /* =========================================================
    SOUND SHEET
@@ -1413,6 +1499,7 @@ function syncControls(skip) {
   $('#envLine').setAttribute('d', line); $('#envFill').setAttribute('d', line + ' Z');
   syncKnobs();
   $('#soundName').textContent = patchLabel();
+  $('#soundSheetTitle').textContent = patchLabel();
 }
 const patchLabel = () => (basePreset ? basePreset.name : 'Custom') + (edited ? ' •' : '');
 function markEdited() { if (!edited) { edited = true; renderPresets(); } }
@@ -1473,10 +1560,7 @@ function previewSoon(envChanged) {
   previewTimer = setTimeout(() => { if (voices.size === 0) previewPhrase(true); }, 250);
 }
 function previewChord() { previewPhrase(true); }
-function placeSoundSheet() {
-  const kb = $('.kb-wrap').getBoundingClientRect();
-  $('#soundSheet').style.setProperty('--sheet-bottom', Math.max(0, window.innerHeight - kb.top + 6) + 'px');
-}
+function placeSoundSheet() { /* sound panel is laid out by CSS inside .app */ }
 $('#resetPreset').addEventListener('click', () => loadPreset(basePreset || PRESETS[0]));
 $('#savePreset').addEventListener('click', () => { $('#presetNameRow').hidden = false; $('#presetNameIn').value = ''; $('#presetNameIn').focus(); });
 $('#presetNameSave').addEventListener('click', () => {
@@ -1645,21 +1729,30 @@ function renderBeat() {
   for (let i = 0; i < beat.steps; i++) { const d = document.createElement('span'); if (i % 4 === 0) d.className = 'beat1'; mini.appendChild(d); }
   const chips = $('#beatChips'); chips.innerHTML = '';
   Object.keys(BEATS).forEach(id => {
-    const b = document.createElement('button'); b.className = 'pill'; b.textContent = BEATS[id].name;
+    const b = document.createElement('button'); b.className = 'style-item';
     b.setAttribute('aria-pressed', String(id === beat.id));
+    b.innerHTML = '<span class="si-name"></span><span class="si-bpm"></span>';
+    b.querySelector('.si-name').textContent = BEATS[id].name;
+    b.querySelector('.si-bpm').textContent = BEATS[id].bpm;
     b.title = (KITS[id] || KITS.lofi).name;
-    b.addEventListener('click', () => { loadBeat(id); toast(BEATS[id].name + ' · ' + kit.name); });
+    b.addEventListener('click', () => { loadBeat(id); });
     chips.appendChild(b);
   });
   const on = chips.querySelector('[aria-pressed="true"]');
-  if (on) requestAnimationFrame(() => { chips.scrollLeft = Math.max(0, on.offsetLeft - chips.offsetLeft - 8); });
+  if (on) requestAnimationFrame(() => {
+    const vertical = chips.scrollHeight > chips.clientHeight + 1;
+    if (vertical) { const top = on.offsetTop - chips.offsetTop; if (top < chips.scrollTop || top + on.offsetHeight > chips.scrollTop + chips.clientHeight) chips.scrollTop = top - 6; }
+    else chips.scrollLeft = Math.max(0, on.offsetLeft - chips.offsetLeft - 8);
+  });
+  $('#beatTitle').textContent = BEATS[beat.id].name;
+  $('#beatKit').textContent = (KITS[beat.id] || KITS.lofi).name + ' · ' + beat.steps + ' steps';
   const g = $('#beatGrid'); g.innerHTML = '';
   ROWS.forEach(([r, label]) => {
     const row = document.createElement('div'); row.className = 'grid-row';
-    const l = document.createElement('span'); l.textContent = label; row.appendChild(l);
+    const l = document.createElement('span'); l.className = 'row-lbl row-' + r; l.textContent = label; row.appendChild(l);
     const cells = document.createElement('div'); cells.className = 'cells'; cells.style.setProperty('--n', beat.steps);
     for (let i = 0; i < beat.steps; i++) {
-      const c = document.createElement('button'); c.className = 'cell' + (i % 4 === 0 ? ' b1' : ''); c.dataset.i = i;
+      const c = document.createElement('button'); c.className = 'cell' + (i % 4 === 0 ? ' b1' : '') + (Math.floor(i / 4) % 2 ? ' alt' : ''); c.dataset.i = i;
       c.setAttribute('aria-label', label + ' step ' + (i + 1)); c.setAttribute('aria-pressed', String(!!beat.grid[r][i]));
       c.addEventListener('click', () => {
         beat.grid[r][i] = !beat.grid[r][i]; c.setAttribute('aria-pressed', String(beat.grid[r][i]));
@@ -2172,7 +2265,7 @@ function frame(now) {
 /* =========================================================
    BOOT
    ========================================================= */
-window.addEventListener('resize', () => { layoutKeyboard(); sizeCanvases(); if (!$('#soundSheet').hidden) placeSoundSheet(); });
+window.addEventListener('resize', () => { fixSafeSides(); layoutKeyboard(); sizeCanvases(); });
 if (window.ResizeObserver) new ResizeObserver(() => { rectsDirty = true; }).observe($('.kb-wrap'));
 const portraitQ = window.matchMedia('(orientation: portrait) and (pointer: coarse)');
 const onOrient = () => { if (portraitQ.matches) { stopHold(); allNotesOff(); if (L.state === 'playing') learnPause(); } else requestAnimationFrame(() => { layoutKeyboard(); sizeCanvases(); }); };
@@ -2184,6 +2277,25 @@ document.addEventListener('visibilitychange', () => {
 });
 document.addEventListener('gesturestart', e => e.preventDefault());
 
+/* iPhone landscape reports the same big inset on both sides, but the camera island is only on one.
+   Keep the inset on the island side and reclaim the other side. */
+function fixSafeSides() {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;visibility:hidden;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)';
+  document.body.appendChild(probe);
+  const cs = getComputedStyle(probe), L0 = parseFloat(cs.paddingLeft) || 0, R0 = parseFloat(cs.paddingRight) || 0;
+  probe.remove();
+  let side = null;
+  if (typeof window.orientation === 'number') side = window.orientation === 90 ? 'left' : window.orientation === -90 ? 'right' : null;
+  else if (screen.orientation && typeof screen.orientation.angle === 'number') side = screen.orientation.angle === 90 ? 'left' : screen.orientation.angle === 270 ? 'right' : null;
+  const big = Math.max(L0, R0);
+  if (!side || big < 30) { root.style.removeProperty('--sl'); root.style.removeProperty('--sr'); return; }
+  root.style.setProperty('--sl', (side === 'left' ? big : 20) + 'px');
+  root.style.setProperty('--sr', (side === 'right' ? big : 20) + 'px');
+}
+window.addEventListener('orientationchange', () => setTimeout(() => { fixSafeSides(); layoutKeyboard(); sizeCanvases(); }, 250));
+if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', () => setTimeout(fixSafeSides, 250));
+fixSafeSides();
 $$('.app-ver').forEach(el => { el.textContent = 'v' + APP_VERSION; });
 setSkin(skin);
 loadBeat(beat.id);
@@ -2198,4 +2310,3 @@ requestAnimationFrame(frame);
 </script>
 </body>
 </html>
-
