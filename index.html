@@ -711,8 +711,10 @@ function fromMs(list) { let t = 0; return list.map(([s, ms]) => { const n = { s,
 
 const ODE_A = 'A4/1 A4/1 A#4/1 C5/1 C5/1 A#4/1 A4/1 G4/1 F4/1 F4/1 G4/1 A4/1';
 const ODE_B = ODE_A + ' G4/1.5 F4/.5 F4/2';
-const PSYCH = PRESETS[1];
-const tame = (o) => Object.assign(pick(PSYCH), o, { name: 'Psych Lead' });
+const customPatch = (baseId, name, overrides) => {
+  const base = PRESETS.find(p => p.id === baseId) || PRESETS[0];
+  return Object.assign(pick(base), overrides, { name });
+};
 const MARY = 'E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/2 D4/1 D4/1 D4/2 E4/1 G4/1 G4/2 E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/1 E4/1 D4/1 D4/1 E4/1 D4/1 C4/4';
 const HCB = 'E4/1 D4/1 C4/2 E4/1 D4/1 C4/2 C4/.5 C4/.5 C4/.5 C4/.5 D4/.5 D4/.5 D4/.5 D4/.5 E4/1 D4/1 C4/2';
 const JB = 'E4/1 E4/1 E4/2 E4/1 E4/1 E4/2 E4/1 G4/1 C4/1.5 D4/.5 E4/4 F4/1 F4/1 F4/1.5 F4/.5 F4/1 E4/1 E4/1 E4/.5 E4/.5';
@@ -727,79 +729,118 @@ const AR = { a: [0, 3, 7, 12, 7, 3, 0, 7], b: [5, 8, 12, 17, 12, 8, 7, 3], c: [0
 const ARP = [].concat(AR.a, AR.b, AR.c, AR.d, AR.e, AR.f, AR.a, AR.b, AR.c, AR.g, [0]);
 
 const SONGS = [
-  { id: 'twinkle', title: 'Twinkle Twinkle', by: 'Traditional', diff: 'easy', bpm: 96, preset: 'bell', notes: S('C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2') },
-  { id: 'mary', title: 'Mary Had a Little Lamb', by: 'Traditional · two verses', diff: 'easy', bpm: 104, preset: 'chip', notes: S(MARY + ' ' + MARY) },
-  { id: 'hotcross', title: 'Hot Cross Buns', by: 'Traditional · three times round', diff: 'easy', bpm: 96, preset: 'lofikeys', notes: S(HCB + ' ' + HCB + ' ' + HCB) },
-  { id: 'jingle', title: 'Jingle Bells', by: 'J. Pierpont · full chorus', diff: 'easy', bpm: 116, preset: 'bell', notes: S(JB + ' E4/1 D4/1 D4/1 E4/1 D4/2 G4/2 ' + JB + ' G4/1 G4/1 F4/1 D4/1 C4/4') },
-  { id: 'squirrel', title: "Chippy's Lullaby", by: 'Best T original', diff: 'easy', bpm: 100, preset: 'choir', notes: S(LULLABY) },
+  // EASY
+  { id: 'twinkle', title: 'Twinkle Twinkle', by: 'Traditional', diff: 'easy', bpm: 96,
+    patch: customPatch('bell', 'Celesta Bell', { wave: 'sine', detune: 6, cutoff: 6500, reso: 1.0, attack: 0.006, decay: 0.85, sustain: 0.12, release: 1.1, delayMix: 0.28, delayTime: 0.36, feedback: 0.32, lfoDepth: 2, lfoRate: 4 }),
+    notes: S('C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2') },
 
-  { id: 'ode', title: 'Ode to Joy', by: 'Beethoven', diff: 'medium', bpm: 108, preset: 'piano', notes: S(ODE_A + ' A4/1.5 G4/.5 G4/2 ' + ODE_B + ' G4/1 G4/1 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 G4/1 F4/1 G4/1 C4/2 ' + ODE_B) },
-  { id: 'greensleeves', title: 'Greensleeves', by: 'Traditional', diff: 'medium', bpm: 108, preset: 'pluck', notes: S(GREEN_V + ' ' + GREEN_C) },
-  { id: 'grace', title: 'Amazing Grace', by: 'Traditional · two verses', diff: 'medium', bpm: 84, preset: 'warmpad', notes: S(GRACE + ' r/1 ' + GRACE) },
-  { id: 'gymno', title: 'Gymnopédie No. 1', by: 'Satie (opening)', diff: 'medium', bpm: 84, preset: 'piano', notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
-  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · full riff & verse', diff: 'medium', bpm: 117, patch: tame({ wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 }),
+  { id: 'mary', title: 'Mary Had a Little Lamb', by: 'Traditional · two verses', diff: 'easy', bpm: 104,
+    patch: customPatch('lofikeys', 'Rhodes EP', { wave: 'triangle', detune: 7, cutoff: 2200, reso: 1.1, attack: 0.008, decay: 0.55, sustain: 0.35, release: 0.45, delayMix: 0.18, delayTime: 0.28, feedback: 0.25, lfoDepth: 6, lfoRate: 3.2 }),
+    notes: S(MARY + ' ' + MARY) },
+
+  { id: 'hotcross', title: 'Hot Cross Buns', by: 'Traditional · three times round', diff: 'easy', bpm: 96,
+    patch: customPatch('piano', 'Warm Marimba', { wave: 'sine', detune: 3, cutoff: 2800, reso: 1.8, attack: 0.004, decay: 0.32, sustain: 0.08, release: 0.28, delayMix: 0.2, delayTime: 0.3, feedback: 0.25, lfoDepth: 0, lfoRate: 4 }),
+    notes: S(HCB + ' ' + HCB + ' ' + HCB) },
+
+  { id: 'jingle', title: 'Jingle Bells', by: 'J. Pierpont · full chorus', diff: 'easy', bpm: 116,
+    patch: customPatch('bell', 'Sleigh Chimes', { wave: 'triangle', detune: 10, cutoff: 7500, reso: 1.4, attack: 0.004, decay: 0.5, sustain: 0.15, release: 0.65, delayMix: 0.26, delayTime: 0.26, feedback: 0.3, lfoDepth: 4, lfoRate: 5.5 }),
+    notes: S(JB + ' E4/1 D4/1 D4/1 E4/1 D4/2 G4/2 ' + JB + ' G4/1 G4/1 F4/1 D4/1 C4/4') },
+
+  { id: 'squirrel', title: "Chippy's Lullaby", by: 'Best T original', diff: 'easy', bpm: 100,
+    patch: customPatch('choir', 'Dreamy Music Box', { wave: 'triangle', detune: 14, cutoff: 3200, reso: 1.2, attack: 0.015, decay: 0.75, sustain: 0.3, release: 1.3, delayMix: 0.42, delayTime: 0.42, feedback: 0.42, lfoDepth: 9, lfoRate: 2.2 }),
+    notes: S(LULLABY) },
+
+  // MEDIUM
+  { id: 'ode', title: 'Ode to Joy', by: 'Beethoven', diff: 'medium', bpm: 108,
+    patch: customPatch('piano', 'Grand Piano', { wave: 'triangle', detune: 6, cutoff: 3400, reso: 1.0, attack: 0.005, decay: 0.9, sustain: 0.28, release: 0.55, delayMix: 0.2, delayTime: 0.32, feedback: 0.28, lfoDepth: 0, lfoRate: 4 }),
+    notes: S(ODE_A + ' A4/1.5 G4/.5 G4/2 ' + ODE_B + ' G4/1 G4/1 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 G4/1 F4/1 G4/1 C4/2 ' + ODE_B) },
+
+  { id: 'greensleeves', title: 'Greensleeves', by: 'Traditional', diff: 'medium', bpm: 108,
+    patch: customPatch('pluck', 'Renaissance Lute', { wave: 'sawtooth', detune: 8, cutoff: 2400, reso: 1.6, attack: 0.004, decay: 0.45, sustain: 0.12, release: 0.4, delayMix: 0.28, delayTime: 0.35, feedback: 0.32, lfoDepth: 3, lfoRate: 4.5 }),
+    notes: S(GREEN_V + ' ' + GREEN_C) },
+
+  { id: 'grace', title: 'Amazing Grace', by: 'Traditional · two verses', diff: 'medium', bpm: 84,
+    patch: customPatch('warmpad', 'Chapel Organ', { wave: 'triangle', detune: 16, cutoff: 2100, reso: 1.1, attack: 0.12, decay: 0.5, sustain: 0.85, release: 0.9, delayMix: 0.38, delayTime: 0.44, feedback: 0.42, lfoDepth: 6, lfoRate: 4.8 }),
+    notes: S(GRACE + ' r/1 ' + GRACE) },
+
+  { id: 'gymno', title: 'Gymnopédie No. 1', by: 'Satie (opening)', diff: 'medium', bpm: 84,
+    patch: customPatch('piano', 'Intimate Felt Piano', { wave: 'triangle', detune: 5, cutoff: 1650, reso: 0.8, attack: 0.012, decay: 1.3, sustain: 0.22, release: 1.1, delayMix: 0.32, delayTime: 0.42, feedback: 0.35, lfoDepth: 4, lfoRate: 1.5 }),
+    notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
+
+  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · full riff & verse', diff: 'medium', bpm: 117,
+    patch: customPatch('bass', 'Funk Clav Bass', { wave: 'sawtooth', detune: 10, cutoff: 2150, reso: 4.5, attack: 0.005, decay: 0.22, sustain: 0.38, release: 0.18, delayMix: 0.18, delayTime: 0.25, feedback: 0.25, lfoDepth: 3, lfoRate: 5 }),
     notes: fromMs([
-      // Main bass/clav riff (Pass 1)
       [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
       [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
-      // Main bass/clav riff (Pass 2)
       [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
       [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
-      // Verse vocal melody ("Someone said they left together...")
       [8, 300], [8, 300], [6, 300], [4, 300], [6, 420], [4, 300], [1, 520],
       [8, 300], [11, 300], [8, 300], [6, 300], [4, 420], [6, 300], [4, 650]
     ]) },
-  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · extended hook', diff: 'medium', bpm: 125, patch: tame({ wave: 'square', detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 }),
+
+  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · extended hook', diff: 'medium', bpm: 125,
+    patch: customPatch('psych', 'Juno Synth Hook', { wave: 'square', detune: 16, cutoff: 3200, reso: 2.6, attack: 0.008, decay: 0.22, sustain: 0.55, release: 0.24, delayMix: 0.34, delayTime: 0.24, feedback: 0.38, lfoDepth: 8, lfoRate: 5.5 }),
     notes: fromMs([
-      // Hook phrase 1
       [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
       [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 520],
-      // Hook phrase 2
       [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
       [9, 220], [11, 220], [13, 330], [14, 220], [13, 220], [11, 330], [9, 520],
-      // Synth outro climb
       [6, 240], [9, 240], [11, 240], [13, 360], [16, 360], [14, 240], [13, 240], [11, 360], [9, 240], [8, 240], [6, 650]
     ]) },
-  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · full lead & chorus', diff: 'medium', bpm: 118, patch: tame({ wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 }),
+
+  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · full lead & chorus', diff: 'medium', bpm: 118,
+    patch: customPatch('lofikeys', 'Wurlitzer & Flute', { wave: 'triangle', detune: 12, cutoff: 2700, reso: 1.9, attack: 0.015, decay: 0.3, sustain: 0.65, release: 0.32, delayMix: 0.36, delayTime: 0.25, feedback: 0.38, lfoDepth: 7, lfoRate: 4.8 }),
     notes: fromMs([
-      // Main flute/synth lead (Pass 1)
       [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
       [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
-      // Main flute/synth lead (Pass 2)
       [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
       [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
-      // Chorus ("Gone a little far this time...")
       [12, 320], [11, 320], [9, 320], [7, 450], [9, 320], [12, 320], [14, 480],
       [16, 320], [14, 320], [12, 320], [11, 320], [9, 650]
     ]) },
-  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · chorus & verse', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }),
+
+  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · chorus & verse', diff: 'medium', bpm: 120,
+    patch: customPatch('psych', 'Phaser Psych Organ', { wave: 'sawtooth', detune: 24, cutoff: 2050, reso: 3.2, attack: 0.035, decay: 0.35, sustain: 0.78, release: 0.55, delayMix: 0.45, delayTime: 0.36, feedback: 0.45, lfoDepth: 14, lfoRate: 3.8 }),
     notes: fromMs([
-      // Chorus Pass 1 ("It feels like I only go backwards baby...")
       [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
       [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 600],
-      // Chorus Pass 2
       [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
       [5, 300], [7, 300], [9, 350], [11, 300], [9, 350], [7, 350], [7, 600],
-      // Verse turnaround ("Every part of me says go ahead...")
       [7, 300], [9, 300], [11, 350], [12, 350], [11, 300], [9, 300], [7, 450],
       [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 650]
     ]) },
-  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · psych synth theme', diff: 'medium', bpm: 122, patch: tame({ wave: 'sawtooth', detune: 22, cutoff: 2100, reso: 4.8, delayMix: 0.44, lfoDepth: 14, lfoRate: 5.2 }),
+
+  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · intro, verse & chorus', diff: 'medium', bpm: 122,
+    patch: customPatch('psych', 'Goth Disco Lead', { wave: 'sawtooth', detune: 20, cutoff: 2350, reso: 4.6, attack: 0.01, decay: 0.24, sustain: 0.58, release: 0.28, delayMix: 0.4, delayTime: 0.25, feedback: 0.42, lfoDepth: 12, lfoRate: 5.2 }),
     notes: S(
-      // Phrase 1: Chromatic vampire hook in D minor / harmonic minor
+      // Part 1: Chromatic vampire hook in D minor
       'D4/.5 F4/.5 A4/.5 Bb4/1 A4/.5 G#4/.5 A4/1 F4/.5 D4/1.5 ' +
       'D4/.5 F4/.5 A4/.5 C5/1 Bb4/.5 A4/.5 G4/1 E4/.5 C#4/1.5 ' +
-      // Phrase 2: Octave jump & eerie descent
+      // Part 2: Octave jump & eerie verse descent
       'D4/.5 F4/.5 A4/.5 D5/1 C#5/.5 C5/.5 B4/.5 Bb4/.5 A4/1 F4/.5 D4/1 ' +
       'G4/.5 A4/.5 Bb4/1 A4/.5 G4/.5 F4/.5 E4/.5 F4/.5 G4/.5 A4/2 ' +
-      // Phrase 3: Driving hypnotic synth bridge
-      'A4/.5 A4/.5 Bb4/.5 A4/.5 G4/.5 F4/.5 E4/.5 C#4/.5 D4/.5 F4/.5 A4/.5 C#5/.5 D5/2'
+      // Part 3: NEW CHORUS - Soaring emotional synth theme
+      'D5/1 A4/1 F5/1.5 E5/.5 D5/1 C#5/1 A4/2 ' +
+      'Bb4/1 D5/1 F5/1.5 E5/.5 D5/1 C#5/1 A4/2 ' +
+      'G4/.5 A4/.5 Bb4/1 C5/1 D5/1.5 E5/.5 F5/2 E5/1 D5/2'
     ) },
 
-  { id: 'elise', title: 'Für Elise', by: 'Beethoven · theme twice', diff: 'hard', bpm: 138, preset: 'piano', notes: S(ELISE + ' ' + ELISE) },
-  { id: 'mountain', title: 'In the Hall of the Mountain King', by: 'Grieg', diff: 'hard', bpm: 150, preset: 'bass', notes: S(MK + ' ' + MK + ' ' + MK) },
-  { id: 'canon', title: 'Canon in D', by: 'Pachelbel · two passes', diff: 'hard', bpm: 72, preset: 'pluck', notes: S(CANON + ' ' + CANON) },
-  { id: 'arp', title: 'Neon Night Arp', by: 'Best T original', diff: 'hard', bpm: 132, preset: 'drive', notes: fromSemis(ARP, 0.5, 2) }
+  // HARD
+  { id: 'elise', title: 'Für Elise', by: 'Beethoven · theme twice', diff: 'hard', bpm: 138,
+    patch: customPatch('piano', 'Classical Fortepiano', { wave: 'triangle', detune: 4, cutoff: 3800, reso: 1.1, attack: 0.004, decay: 0.65, sustain: 0.18, release: 0.35, delayMix: 0.22, delayTime: 0.28, feedback: 0.26, lfoDepth: 0, lfoRate: 4 }),
+    notes: S(ELISE + ' ' + ELISE) },
+
+  { id: 'mountain', title: 'In the Hall of the Mountain King', by: 'Grieg', diff: 'hard', bpm: 150,
+    patch: customPatch('bass', 'Pizzicato & Bassoon', { wave: 'square', detune: 8, cutoff: 1850, reso: 3.8, attack: 0.003, decay: 0.14, sustain: 0.12, release: 0.11, delayMix: 0.2, delayTime: 0.2, feedback: 0.28, lfoDepth: 0, lfoRate: 5 }),
+    notes: S(MK + ' ' + MK + ' ' + MK) },
+
+  { id: 'canon', title: 'Canon in D', by: 'Pachelbel · two passes', diff: 'hard', bpm: 72,
+    patch: customPatch('pluck', 'Baroque Harpsichord', { wave: 'sawtooth', detune: 9, cutoff: 4200, reso: 1.8, attack: 0.003, decay: 0.38, sustain: 0.1, release: 0.28, delayMix: 0.26, delayTime: 0.38, feedback: 0.32, lfoDepth: 2, lfoRate: 4 }),
+    notes: S(CANON + ' ' + CANON) },
+
+  { id: 'arp', title: 'Neon Night Arp', by: 'Best T original', diff: 'hard', bpm: 132,
+    patch: customPatch('drive', 'Outrun Pluck Arp', { wave: 'sawtooth', detune: 22, cutoff: 4600, reso: 3.2, attack: 0.005, decay: 0.2, sustain: 0.25, release: 0.2, delayMix: 0.42, delayTime: 0.23, feedback: 0.48, lfoDepth: 5, lfoRate: 6 }),
+    notes: fromSemis(ARP, 0.5, 2) }
 ];
 let mySongs = store.get('bt_mysongs', []);
 const allSongs = () => SONGS.concat(mySongs);
