@@ -701,7 +701,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
       </div>
       <div class="logo logo-neon"><span class="neon-name">Best T</span><span class="neon-sub">POLY SYNTH</span></div>
       <div class="logo logo-plate"><span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span><span class="plate-name">BEST T</span><span class="plate-sub">MODEL BT-1</span></div>
-      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.1</span></div>
+      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.2</span></div>
     </div>
 
     <nav class="tabs" role="tablist" aria-label="Mode">
@@ -954,7 +954,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="skinSheetTitle" style="max-width:760px">
     <div class="sheet-head"><h2 id="skinSheetTitle">Skins</h2><button class="btn" data-close>Close</button></div>
     <div class="skins" id="skinList"></div>
-    <p class="note">Best T <span class="app-ver">v2.1</span></p>
+    <p class="note">Best T <span class="app-ver">v2.2</span></p>
   </div>
 </div>
 
@@ -963,7 +963,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '2.1';
+const APP_VERSION = '2.2';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1094,62 +1094,132 @@ const SONGS = [
     patch: customPatch('piano', 'Intimate Felt Piano', { wave: 'triangle', detune: 5, cutoff: 1650, reso: 0.8, attack: 0.012, decay: 1.3, sustain: 0.22, release: 1.1, delayMix: 0.32, delayTime: 0.42, feedback: 0.35, lfoDepth: 4, lfoRate: 1.5 }),
     notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
 
-  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · full riff & verse', diff: 'medium', bpm: 117,
-    patch: customPatch('bass', 'Funk Clav Bass', { wave: 'sawtooth', detune: 10, cutoff: 2150, reso: 4.5, attack: 0.005, decay: 0.22, sustain: 0.38, release: 0.18, delayMix: 0.18, delayTime: 0.25, feedback: 0.25, lfoDepth: 3, lfoRate: 5 }),
-    notes: fromMs([
-      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
-      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
-      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
-      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
-      [8, 300], [8, 300], [6, 300], [4, 300], [6, 420], [4, 300], [1, 520],
-      [8, 300], [11, 300], [8, 300], [6, 300], [4, 420], [6, 300], [4, 650]
-    ]) },
-
-  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · extended hook', diff: 'medium', bpm: 125,
-    patch: customPatch('psych', 'Juno Synth Hook', { wave: 'square', detune: 16, cutoff: 3200, reso: 2.6, attack: 0.008, decay: 0.22, sustain: 0.55, release: 0.24, delayMix: 0.34, delayTime: 0.24, feedback: 0.38, lfoDepth: 8, lfoRate: 5.5 }),
-    notes: fromMs([
-      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
-      [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 520],
-      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
-      [9, 220], [11, 220], [13, 330], [14, 220], [13, 220], [11, 330], [9, 520],
-      [6, 240], [9, 240], [11, 240], [13, 360], [16, 360], [14, 240], [13, 240], [11, 360], [9, 240], [8, 240], [6, 650]
-    ]) },
-
-  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · full lead & chorus', diff: 'medium', bpm: 118,
-    patch: customPatch('lofikeys', 'Wurlitzer & Flute', { wave: 'triangle', detune: 12, cutoff: 2700, reso: 1.9, attack: 0.015, decay: 0.3, sustain: 0.65, release: 0.32, delayMix: 0.36, delayTime: 0.25, feedback: 0.38, lfoDepth: 7, lfoRate: 4.8 }),
-    notes: fromMs([
-      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
-      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
-      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
-      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
-      [12, 320], [11, 320], [9, 320], [7, 450], [9, 320], [12, 320], [14, 480],
-      [16, 320], [14, 320], [12, 320], [11, 320], [9, 650]
-    ]) },
-
-  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · chorus & verse', diff: 'medium', bpm: 120,
-    patch: customPatch('psych', 'Phaser Psych Organ', { wave: 'sawtooth', detune: 24, cutoff: 2050, reso: 3.2, attack: 0.035, decay: 0.35, sustain: 0.78, release: 0.55, delayMix: 0.45, delayTime: 0.36, feedback: 0.45, lfoDepth: 14, lfoRate: 3.8 }),
-    notes: fromMs([
-      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
-      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 600],
-      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
-      [5, 300], [7, 300], [9, 350], [11, 300], [9, 350], [7, 350], [7, 600],
-      [7, 300], [9, 300], [11, 350], [12, 350], [11, 300], [9, 300], [7, 450],
-      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 650]
-    ]) },
-
-  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · intro, verse & chorus', diff: 'medium', bpm: 122,
-    patch: customPatch('psych', 'Goth Disco Lead', { wave: 'sawtooth', detune: 20, cutoff: 2350, reso: 4.6, attack: 0.01, decay: 0.24, sustain: 0.58, release: 0.28, delayMix: 0.4, delayTime: 0.25, feedback: 0.42, lfoDepth: 12, lfoRate: 5.2 }),
+// ==================== TAME IMPALA (AUTHENTIC TRANSCRIPTIONS) ====================
+  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · iconic bass & clav riff', diff: 'medium', bpm: 117,
+    patch: customPatch('bass', 'Funk Clav Bass', { wave: 'sawtooth', osc2: -12, osc2Wave: 'square', detune: 8, cutoff: 2150, reso: 4.5, attack: 0.005, decay: 0.22, sustain: 0.35, release: 0.14, delayMix: 0.12, delayTime: 0.25, feedback: 0.2, lfoDepth: 2, lfoRate: 5 }),
     notes: S(
-      // Part 1: Chromatic vampire hook in D minor
-      'D4/.5 F4/.5 A4/.5 Bb4/1 A4/.5 G#4/.5 A4/1 F4/.5 D4/1.5 ' +
-      'D4/.5 F4/.5 A4/.5 C5/1 Bb4/.5 A4/.5 G4/1 E4/.5 C#4/1.5 ' +
-      // Part 2: Octave jump & eerie verse descent
-      'D4/.5 F4/.5 A4/.5 D5/1 C#5/.5 C5/.5 B4/.5 Bb4/.5 A4/1 F4/.5 D4/1 ' +
-      'G4/.5 A4/.5 Bb4/1 A4/.5 G4/.5 F4/.5 E4/.5 F4/.5 G4/.5 A4/2 ' +
-      // Part 3: NEW CHORUS - Soaring emotional synth theme
-      'D5/1 A4/1 F5/1.5 E5/.5 D5/1 C#5/1 A4/2 ' +
-      'Bb4/1 D5/1 F5/1.5 E5/.5 D5/1 C#5/1 A4/2 ' +
-      'G4/.5 A4/.5 Bb4/1 C5/1 D5/1.5 E5/.5 F5/2 E5/1 D5/2'
+      // Bar 1-2: Iconic C# minor walk-up & syncopated slide (Pass 1)
+      'C#4/1 C#4/.5 E4/.5 F#4/.5 G#4/1 A4/.5 G#4/.5 F#4/.5 E4/1 r/.5 ' +
+      'F#4/1 G#4/.5 A4/.5 F#4/.5 E4/1 C#4/.5 D#4/1 B3/1.5 r/.5 ' +
+      // Bar 3-4: Riff Pass 2
+      'C#4/1 C#4/.5 E4/.5 F#4/.5 G#4/1 A4/.5 G#4/.5 F#4/.5 E4/1 r/.5 ' +
+      'F#4/1 G#4/.5 A4/.5 F#4/.5 E4/1 C#4/.5 D#4/1 B3/1.5 r/.5 ' +
+      // High Synth Hook ("Someone said they left together...")
+      'C#5/.5 C#5/.5 B4/.5 F#4/.5 E4/.5 G#4/.5 E4/.5 F#4/.5 E4/.5 G#4/.5 E4/.5 F#4/.5 E4/1 r/.5 ' +
+      'F#5/.5 E5/.5 E5/.5 D#5/.5 D#5/.5 C#5/.5 E5/.5 D#5/.5 D#5/.5 C#5/.5 C#5/.5 B4/1.5'
+    ) },
+
+  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · verse, pre-chorus & chorus', diff: 'medium', bpm: 115,
+    patch: customPatch('psych', 'Goth Disco Lead', { wave: 'sawtooth', osc2: 12, osc2Wave: 'triangle', detune: 18, cutoff: 2600, reso: 4.2, attack: 0.008, decay: 0.24, sustain: 0.55, release: 0.22, delayMix: 0.35, delayTime: 0.26, feedback: 0.38, lfoDepth: 10, lfoRate: 5.2 }),
+    notes: S(
+      // Intro / Verse ("The morning light is turning blue, the feeling is bizarre...")
+      'D5/.5 C5/.5 G4/.5 B4/.5 B4/.5 B4/.5 G4/.5 G4/.5 G4/.5 F#4/.75 E4/.75 r/.5 ' +
+      'F#4/.5 B4/.5 F#4/.5 D5/.5 B4/.5 F#4/.5 F#5/.5 G5/.5 F#5/.5 D5/.5 D5/.5 B4/.5 G4/.5 C5/1 r/.5 ' +
+      'B4/.5 G4/.5 D5/.5 C5/.5 D5/.5 E5/1.5 D5/.75 D5/.5 F#4/.5 B4/.5 F#5/.5 ' +
+      'G5/.5 F#5/.5 D5/.5 D5/.5 B4/.5 G4/.5 C5/.5 D5/.5 E5/2 r/.5 ' +
+      // Pre-Chorus ("In the end I hope it's you and me, in the darkness I would never leave...")
+      'B4/.5 E4/.5 E4/.5 E4/.5 G4/.5 A4/.5 A4/.5 F#4/.5 F#4/.5 E4/.5 E4/.5 F#4/.5 E4/.5 E4/.5 E4/.5 F#4/.5 E4/1 r/.5 ' +
+      'B3/.5 E4/.5 E4/.5 E4/.5 G4/.5 A4/.5 A4/.5 F#4/.5 F#4/.5 E4/.5 E4/.5 E4/.5 F#4/.5 E4/1.5 r/.5 ' +
+      // Chorus ("Run from the sunlight, Dracula... Isn't the view spectacular?")
+      'F#4/.5 D#4/.5 F#4/.5 G4/.5 A4/1.5 B4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 E4/1.5 r/.5 ' +
+      'F#4/.5 D#4/.5 F#4/.5 G4/.5 A4/1.5 B4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 E4/1.5 r/.5 ' +
+      'F#4/.5 D#4/.5 F#4/.5 G4/.5 A4/1.5 B4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 E4/2'
+    ) },
+
+  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · vocal hook & outro riff', diff: 'medium', bpm: 125,
+    patch: customPatch('psych', 'Juno Synth Hook', { wave: 'square', osc2: -12, osc2Wave: 'sawtooth', detune: 16, cutoff: 3200, reso: 2.8, attack: 0.008, decay: 0.22, sustain: 0.55, release: 0.2, delayMix: 0.34, delayTime: 0.24, feedback: 0.38, lfoDepth: 8, lfoRate: 5.5 }),
+    notes: S(
+      // Opening Stutter Synth & Vocal Hook ("It's always around me, all this noise...")
+      'C#5/.5 C#5/.25 C#5/.25 C#5/.5 C#5/.5 C#5/.5 C#4/.5 r/1 ' +
+      'C#5/.5 C#5/.25 C#5/.25 C#5/.5 C#5/.5 B4/.5 A4/.5 G#4/.5 F#4/1 r/.5 ' +
+      'A4/.5 B4/.5 C#5/.5 C#5/.5 B4/.5 A4/.5 G#4/.5 F#4/1.5 r/.5 ' +
+      // Iconic Outro Guitar/Synth Riff ("Baby, now I'm ready, moving on...")
+      'F#4/.5 F#4/.5 A4/.5 B4/.75 C#5/.75 B4/.5 A4/.5 F#4/.5 E4/.75 F#4/1.25 r/.5 ' +
+      'F#4/.5 F#4/.5 A4/.5 B4/.75 C#5/.75 E5/.5 C#5/.5 B4/.5 A4/.75 F#4/1.25 r/.5 ' +
+      'F#4/.5 F#4/.5 A4/.5 B4/.75 C#5/.75 B4/.5 A4/.5 F#4/.5 E4/.75 D4/1.5'
+    ) },
+
+  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · intro flute & chorus', diff: 'medium', bpm: 98,
+    patch: customPatch('flute', 'Wurlitzer & Flute', { wave: 'triangle', osc2: 12, osc2Wave: 'sine', detune: 10, cutoff: 2900, reso: 1.6, attack: 0.015, decay: 0.28, sustain: 0.65, release: 0.25, delayMix: 0.32, delayTime: 0.3, feedback: 0.35, lfoDepth: 6, lfoRate: 4.8 }),
+    notes: S(
+      // Chorus ("Gone a little far, gone a little far this time for somethin'...")
+      'D5/.5 C5/.5 Bb4/.5 G4/1 Bb4/.5 C5/.5 D5/.5 C5/.5 Bb4/.5 G4/1 F4/.5 G4/1 r/.5 ' +
+      'D5/.5 C5/.5 Bb4/.5 G4/1 Bb4/.5 C5/.5 D5/.5 F5/.5 D5/.5 C5/1 Bb4/.5 G4/1.5 r/.5 ' +
+      // Iconic Piccolo Flute Hook
+      'G5/.5 F5/.5 D5/.5 C5/.5 Bb4/.5 G4/.5 Bb4/.5 C5/.5 D5/1 r/.5 ' +
+      'G5/.5 F5/.5 D5/.5 C5/.5 Bb4/.5 G4/.5 F4/.5 D4/.5 G4/1.5'
+    ) },
+
+  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · full chorus & verse', diff: 'medium', bpm: 76,
+    patch: customPatch('psych', 'Phaser Psych Organ', { wave: 'sawtooth', osc2: 12, osc2Wave: 'triangle', detune: 22, cutoff: 2100, reso: 3.0, attack: 0.025, decay: 0.35, sustain: 0.75, release: 0.4, delayMix: 0.42, delayTime: 0.38, feedback: 0.42, lfoDepth: 12, lfoRate: 3.8 }),
+    notes: S(
+      // Chorus Pass 1 ("It feels like I only go backwards, baby...")
+      'D5/1 C5/.5 Bb4/.5 A4/.75 G4/.75 F4/1.5 r/.5 ' +
+      'E4/.5 F4/.5 G4/.5 A4/.75 G4/.75 F4/.5 E4/.5 D4/1.5 r/.5 ' +
+      // Chorus Pass 2 ("Every part of me says go ahead...")
+      'D5/1 C5/.5 Bb4/.5 A4/.75 G4/.75 F4/1.5 r/.5 ' +
+      'E4/.5 F4/.5 G4/.5 A4/.75 F4/.75 E4/.5 D4/2 r/.5 ' +
+      // Verse ("I got my hopes up again, oh no, not again...")
+      'A4/.5 A4/.5 A4/.5 Bb4/.5 A4/.5 G4/.5 F4/.5 G4/1 F4/.5 E4/.5 D4/1.5'
+    ) },
+
+  // ==================== MICHAEL JACKSON CLASSICS ====================
+  { id: 'billiejean', title: 'Billie Jean', by: 'Michael Jackson · bassline, verse & chorus', diff: 'medium', bpm: 117,
+    patch: customPatch('brass', 'CS-80 Synth Brass & Bass', { wave: 'sawtooth', osc2: -12, osc2Wave: 'square', detune: 12, cutoff: 2400, reso: 2.8, attack: 0.015, decay: 0.25, sustain: 0.65, release: 0.2, delayMix: 0.22, delayTime: 0.25, feedback: 0.28, lfoDepth: 4, lfoRate: 5.5 }),
+    notes: S(
+      // Iconic F#m Bassline (2 bars)
+      'F#4/.5 C#4/.5 E4/.5 F#4/.5 E4/.5 C#4/.5 B3/.5 C#4/.5 ' +
+      'F#4/.5 C#4/.5 E4/.5 F#4/.5 E4/.5 C#4/.5 B3/.5 C#4/.5 ' +
+      // Verse ("She was more like a beauty queen from a movie scene...")
+      'C#5/.5 C#5/.5 C#5/.5 B4/.5 A4/.5 B4/.5 A4/.5 C#5/1 B4/.5 A4/.5 B4/.5 A4/.5 C#5/1.5 r/.5 ' +
+      'F#4/.5 A4/.5 B4/.5 A4/.5 G#4/.5 F#4/1 F#4/.5 G#4/.5 F#4/1.5 r/.5 ' +
+      // Chorus ("Billie Jean is not my lover, she's just a girl...")
+      'F#5/.75 F#5/.75 E5/.25 C#5/.75 r/.5 C#5/.5 F#5/.75 F#5/.75 E5/.25 C#5/1 r/.5 ' +
+      'F#5/.5 F#5/.5 F#5/.5 E5/.25 C#5/.75 C#5/.5 F#5/.5 A5/.5 B5/.5 A5/.5 G#5/.5 F#5/1 r/.5 ' +
+      // ("But the kid is not my son...")
+      'F#5/.5 F#5/.5 C6/.5 B5/.5 B5/.5 F#5/.5 D5/.5 C#5/2'
+    ) },
+
+  { id: 'beatit', title: 'Beat It', by: 'Michael Jackson · Synclavier riff & chorus', diff: 'medium', bpm: 138,
+    patch: customPatch('drive', 'Synclavier Guitar Lead', { wave: 'sawtooth', osc2: 0, osc2Wave: 'square', detune: 16, cutoff: 3800, reso: 3.5, attack: 0.005, decay: 0.2, sustain: 0.7, release: 0.18, delayMix: 0.25, delayTime: 0.22, feedback: 0.3, lfoDepth: 5, lfoRate: 6 }),
+    notes: S(
+      // Iconic Main Riff (Pass 1)
+      'E4/.5 G4/.5 B4/.5 G5/.5 E5/1 F#5/.5 E5/.5 D5/.5 D5/1 r/.5 ' +
+      // Iconic Main Riff (Pass 2)
+      'E4/.5 G4/.5 B4/.5 G5/.5 E5/1 F#5/.5 E5/.5 D5/1.5 r/.5 ' +
+      // Verse ("They told him don't you ever come around here...")
+      'B4/.5 B4/.5 B4/.5 A4/.5 B4/.5 D5/.5 B4/.5 A4/.5 B4/1 r/.5 ' +
+      'B4/.5 B4/.5 B4/.5 B4/.5 A4/.5 G4/.5 A4/.5 G4/.5 B4/1.5 r/.5 ' +
+      // Chorus ("Just beat it, beat it, no one wants to be defeated...")
+      'B4/.5 A4/.5 G4/.5 E5/.5 E5/1 r/.5 D5/.5 B4/.5 D5/.5 D5/1 r/.5 ' +
+      'B4/.5 B4/.5 B4/.5 B4/.5 D5/.5 B4/.5 D5/.5 B4/.5 A4/.5 G4/.5 A4/.5 G4/.5 E4/2'
+    ) },
+
+  { id: 'smoothcriminal', title: 'Smooth Criminal', by: 'Michael Jackson · staccato riff & chorus', diff: 'hard', bpm: 118,
+    patch: customPatch('pluck', 'Punchy Synth Staccato', { wave: 'sawtooth', osc2: -12, osc2Wave: 'square', detune: 10, cutoff: 3600, reso: 3.0, attack: 0.003, decay: 0.16, sustain: 0.2, release: 0.12, delayMix: 0.18, delayTime: 0.25, feedback: 0.25, lfoDepth: 0, lfoRate: 5 }),
+    notes: S(
+      // Iconic A-minor Staccato Riff (2x)
+      'A4/.5 A4/.25 A4/.25 A4/.25 G4/.25 A4/.5 B4/.5 B4/.5 A4/.25 B4/.25 ' +
+      'C5/.5 C5/.5 B4/.25 C5/.25 B4/.5 G4/.5 E4/1 ' +
+      'A4/.5 A4/.25 A4/.25 A4/.25 G4/.25 A4/.5 B4/.5 B4/.5 A4/.25 B4/.25 ' +
+      'C5/.5 C5/.5 B4/.25 C5/.25 B4/.5 G4/.5 E4/1 ' +
+      // Chorus ("Annie, are you okay? So, Annie, are you okay? Are you okay, Annie?")
+      'C5/.25 B4/.25 A4/.25 G4/.25 A4/.5 E4/.5 r/.5 ' +
+      'G4/.25 C5/.25 B4/.25 A4/.25 G4/.25 A4/.5 E4/.5 r/.5 ' +
+      'C5/.25 B4/.25 A4/.25 G4/.25 A4/.5 B4/.5 G#4/.5 E4/1.5'
+    ) },
+
+  { id: 'thriller', title: 'Thriller', by: 'Michael Jackson · verse & chorus hook', diff: 'medium', bpm: 118,
+    patch: customPatch('brass', '80s Horror Synth Brass', { wave: 'sawtooth', osc2: -12, osc2Wave: 'sawtooth', detune: 18, cutoff: 2800, reso: 3.4, attack: 0.015, decay: 0.28, sustain: 0.7, release: 0.25, delayMix: 0.3, delayTime: 0.25, feedback: 0.35, lfoDepth: 7, lfoRate: 5.2 }),
+    notes: S(
+      // Bass Intro Hook
+      'C#4/.5 D#4/.5 F#4/.5 G#4/.5 C#4/1.5 r/.5 C#4/.5 D#4/.5 F#4/.5 G#4/.5 C#4/1.5 r/.5 ' +
+      // Verse ("It's close to midnight, and something evil's lurking in the dark...")
+      'B4/.5 C#5/.5 C#5/.5 E5/.5 C#5/.5 B4/.5 G#4/1 r/.5 ' +
+      'B4/.5 C#5/.5 C#5/.5 C#5/.5 B4/.5 C#5/.5 B4/.5 C#5/.5 E5/.5 C#5/.5 B4/.5 G#4/1.5 r/.5 ' +
+      // Chorus ("'Cause this is thriller, thriller night...")
+      'G#4/.5 B4/.5 G#4/.5 C#5/1 B4/1 r/.5 B4/.5 A#4/.5 G#4/1 F#4/1 r/.5 ' +
+      'G#4/.5 G#4/.5 F#4/.5 F#4/.5 E4/.5 E4/.5 C#4/.5 E4/.5 F#4/.5 G#4/1 F#4/.5 E4/.5 F#4/1.5'
     ) },
 
   // HARD
