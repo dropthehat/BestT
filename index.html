@@ -294,11 +294,12 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 
 /* Sheets */
 .backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
-.head-btns { display: flex; gap: 8px; }
+.head-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.btn.hold[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); border-color: transparent; box-shadow: 0 0 12px color-mix(in srgb, var(--accent2) 60%, transparent); }
 #soundSheet { bottom: var(--sheet-bottom, 0px); background: rgba(0, 0, 0, 0.35); }
 .wave.layer { height: 36px; font-size: 12px; }
 .sheet { width: 100%; max-width: 980px; max-height: 100%; overflow: auto; background: var(--chassis); color: var(--text); border-radius: calc(var(--radius) + 4px); padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 0 0 1px var(--line), 0 30px 60px rgba(0, 0, 0, 0.5); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
-.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .sheet-head h2 { margin: 0; font-family: var(--font-display); font-style: var(--display-style); font-size: 26px; font-weight: 700; }
 .sound-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 14px; }
 .presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -406,6 +407,12 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .sound-grid { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
   .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* Sound panel open: keyboard shrinks to a short strip so the settings get the screen */
+.app.sound-open { --kb-h: clamp(64px, 14dvh, 110px); }
+.app.sound-open .foot { display: none; }
+.app.sound-open .kb-wrap { padding: 4px 6px 6px; }
+.app.sound-open .kw { padding-bottom: 4px; font-size: 10px; }
+.app.sound-open .lbl-key { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -576,7 +583,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 <!-- SOUND SHEET -->
 <div class="backdrop" id="soundSheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="soundSheetTitle">
-    <div class="sheet-head"><h2 id="soundSheetTitle">Sound</h2><div class="head-btns"><button class="btn" id="hearSound">Hear it</button><button class="btn primary" data-close>Done</button></div></div>
+    <div class="sheet-head"><h2 id="soundSheetTitle">Sound</h2><div class="head-btns"><button class="btn hold" id="holdNote" aria-pressed="false">Hold note</button><button class="btn" id="hearSound">Hear it</button><button class="btn primary" data-close>Done</button></div></div>
     <div class="sound-grid">
       <div class="card" style="display:flex;flex-direction:column;gap:10px">
         <div class="chips" id="presetCats"></div>
@@ -906,6 +913,7 @@ function applyPatch(instant) {
   setP(filter.frequency, patch.cutoff, instant); setP(filter.Q, patch.reso, instant);
   setP(delay.delayTime, patch.delayTime, instant); setP(fb.gain, Math.min(0.85, patch.feedback), instant);
   setP(wet.gain, patch.delayMix, instant); setP(lfo.frequency, patch.lfoRate, instant); setP(lfoGain.gain, patch.lfoDepth, instant);
+  if (holdOn && voices.has(HOLD_SEMI)) setP(voices.get(HOLD_SEMI).g.gain, 0.22 * patch.sustain);
   voices.forEach(v => {
     v.o1.type = patch.wave; v.o2.type = patch.osc2Wave || patch.wave;
     setP(v.o2.frequency, v.f * Math.pow(2, (patch.osc2 || 0) / 12)); setP(v.g2.gain, patch.osc2 ? 0.6 : 1);
@@ -1173,7 +1181,7 @@ const CTL = {
 Object.keys(CTL).forEach(k => {
   const input = $('#p-' + k);
   input.addEventListener('input', () => { patch[k] = CTL[k].m.from(+input.value); markEdited(); applyPatch(); syncControls(input); });
-  input.addEventListener('change', previewSoon);
+  input.addEventListener('change', () => previewSoon(['attack', 'decay', 'release'].includes(k)));
 });
 const volIn = $('#p-volume');
 volIn.addEventListener('change', () => previewSoon());
@@ -1244,7 +1252,7 @@ function loadPreset(p, silent) {
   basePreset = p; patch = pick(p); edited = false;
   if (p.id) store.set('bt_preset', p.id);
   applyPatch(); syncControls(); renderPresets();
-  if (!silent) previewChord();
+  if (!silent) { if (holdOn) retriggerHold(); else previewChord(); }
 }
 let previewTimer = null;
 function previewPhrase(short) {
@@ -1254,8 +1262,21 @@ function previewPhrase(short) {
   seq.forEach((s, i) => setTimeout(() => { noteOn(s, true); setTimeout(() => noteOff(s, true), len); }, i * step));
   if (!short) setTimeout(() => { [12, 16, 19].forEach(s => { noteOn(s, true); setTimeout(() => noteOff(s, true), 800); }); }, seq.length * step + 120);
 }
-function previewSoon() {
+const HOLD_SEMI = 12;
+let holdOn = false;
+function startHold() {
+  ensureAudio(); holdOn = true; noteOn(HOLD_SEMI, true);
+  $('#holdNote').setAttribute('aria-pressed', 'true'); $('#holdNote').textContent = 'Holding C';
+}
+function stopHold() {
+  if (holdOn && voices.has(HOLD_SEMI)) noteOff(HOLD_SEMI, true);
+  holdOn = false;
+  $('#holdNote').setAttribute('aria-pressed', 'false'); $('#holdNote').textContent = 'Hold note';
+}
+function retriggerHold() { if (holdOn) noteOn(HOLD_SEMI, true); }
+function previewSoon(envChanged) {
   if ($('#soundSheet').hidden) return;
+  if (holdOn) { if (envChanged === true) retriggerHold(); return; }
   clearTimeout(previewTimer);
   previewTimer = setTimeout(() => { if (voices.size === 0) previewPhrase(true); }, 250);
 }
@@ -1278,14 +1299,27 @@ $('#presetNameIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('
    SHEETS, TOAST, SKINS
    ========================================================= */
 function openSheet(id) { closeSheets(); $(id).hidden = false; const f = $(id).querySelector('[data-close]'); if (f) f.focus(); }
-function closeSheets() { $$('.backdrop').forEach(b => { b.hidden = true; }); }
+function closeSheets() {
+  const wasSound = !$('#soundSheet').hidden;
+  $$('.backdrop').forEach(b => { b.hidden = true; });
+  if (wasSound) {
+    stopHold(); app.classList.remove('sound-open');
+    requestAnimationFrame(() => { layoutKeyboard(); sizeCanvases(); });
+  }
+}
 const anySheetOpen = () => $$('.backdrop').some(b => !b.hidden);
 $$('.backdrop').forEach(b => {
   b.addEventListener('click', e => { if (e.target === b) closeSheets(); });
   b.querySelector('[data-close]').addEventListener('click', closeSheets);
 });
-$('#openSound').addEventListener('click', () => { renderPresets(); syncControls(); placeSoundSheet(); openSheet('#soundSheet'); });
-$('#hearSound').addEventListener('click', () => previewPhrase(false));
+$('#openSound').addEventListener('click', () => {
+  renderPresets(); syncControls();
+  app.classList.add('sound-open');
+  openSheet('#soundSheet');
+  requestAnimationFrame(() => { layoutKeyboard(); placeSoundSheet(); rectsDirty = true; });
+});
+$('#hearSound').addEventListener('click', () => { if (holdOn) stopHold(); previewPhrase(false); });
+$('#holdNote').addEventListener('click', () => { holdOn ? stopHold() : startHold(); });
 
 let toastTimer = null;
 function toast(msg, action, fn) {
@@ -1936,7 +1970,7 @@ function frame(now) {
 window.addEventListener('resize', () => { layoutKeyboard(); sizeCanvases(); if (!$('#soundSheet').hidden) placeSoundSheet(); });
 if (window.ResizeObserver) new ResizeObserver(() => { rectsDirty = true; }).observe($('.kb-wrap'));
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { learnPause(); allNotesOff(); }
+  if (document.hidden) { learnPause(); stopHold(); allNotesOff(); }
   else if (ctx && ctx.state !== 'running') ctx.resume();
 });
 document.addEventListener('gesturestart', e => e.preventDefault());
