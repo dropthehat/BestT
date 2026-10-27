@@ -193,9 +193,13 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 /* Learn */
 .panel-learn { display: flex; flex-direction: column; gap: 8px; position: relative; }
 .hud { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: space-between; }
-.song-btn { display: flex; flex-direction: column; align-items: flex-start; text-align: left; min-height: 44px; padding: 4px 14px 4px 12px; border-radius: 14px; background: var(--panel); min-width: 0; max-width: 100%; }
-.song-btn .t { font-family: var(--font-display); font-style: var(--display-style); font-weight: 700; font-size: 19px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
-.song-btn .m { font-size: 12px; color: var(--muted); }
+.song-btn { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; min-height: 48px; padding: 6px 14px; border-radius: 14px; background: color-mix(in srgb, var(--accent2) 14%, var(--panel)); border: 2px solid var(--accent2); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); min-width: 0; max-width: 100%; transition: transform 0.12s ease, background 0.15s ease; }
+.song-btn:hover { background: color-mix(in srgb, var(--accent2) 22%, var(--panel)); }
+.song-btn:active { transform: scale(0.98); }
+.song-btn-info { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.song-btn .t { font-family: var(--font-display); font-style: var(--display-style); font-weight: 700; font-size: 19px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+.song-btn .m { font-size: 12px; color: var(--accent2); font-weight: 700; }
+.song-btn-cta { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: var(--accent2); color: var(--on-accent2); font-size: 12px; font-weight: 700; white-space: nowrap; flex: none; }
 .stats { display: flex; gap: 18px; }
 .stat { display: flex; flex-direction: column; align-items: flex-end; }
 .stat b { font-family: var(--font-mono); font-size: 19px; font-variant-numeric: tabular-nums; line-height: 1.1; }
@@ -207,6 +211,10 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 .seg button[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); }
 .btn { height: 42px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; }
 .btn.primary { background: var(--accent); border-color: transparent; color: var(--on-accent); }
+.btn.danger { border-color: color-mix(in srgb, var(--bad) 50%, var(--line)); color: var(--bad); }
+.btn.danger:hover:not(:disabled) { background: var(--bad); color: #fff; border-color: transparent; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn.danger.confirm { background: var(--bad); color: #fff; border-color: transparent; }
 .progress { height: 5px; border-radius: 3px; background: var(--panel-2); overflow: hidden; flex: none; }
 .progress div { height: 100%; width: 0; background: var(--accent); border-radius: 3px; }
 .lane-box { position: relative; flex: 1; min-height: 60px; border-radius: var(--radius) var(--radius) 6px 6px; background: var(--base); overflow: hidden; }
@@ -351,7 +359,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .pill { height: 30px; padding: 0 10px; font-size: 12px; }
   .sq-btn { width: 34px; height: 34px; font-size: 16px; border-radius: 9px; } .bpm b { font-size: 18px; } .play-btn { width: 40px; height: 40px; }
   .beat-card { gap: 4px; } .steps span { height: 4px; }
-  .hud { gap: 6px; flex-wrap: nowrap; } .song-btn { min-height: 36px; padding: 2px 10px; } .song-btn .t { font-size: 15px; max-width: 180px; } .song-btn .m { display: none; }
+  .hud { gap: 6px; flex-wrap: nowrap; } .song-btn { min-height: 36px; padding: 2px 10px; } .song-btn .t { font-size: 15px; max-width: 180px; } .song-btn .m { display: none; } .song-btn-cta { padding: 3px 8px; font-size: 11px; }
   .stats { gap: 10px; } .stat b { font-size: 15px; } .stat small { font-size: 9px; }
   .seg button { height: 30px; padding: 0 8px; font-size: 12px; } .btn { height: 34px; padding: 0 10px; font-size: 13px; }
   .cell { height: 24px; } .rec-big { width: 60px; height: 60px; } .rec-big span { width: 24px; height: 24px; } .rec-time { font-size: 20px; }
@@ -467,7 +475,13 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
     <!-- LEARN -->
     <section class="panel panel-learn" data-panel="learn" hidden>
       <div class="hud">
-        <button class="song-btn" id="songPick"><span class="t" id="songTitle">Pick a song</span><span class="m" id="songMeta">Tap to choose</span></button>
+        <button class="song-btn" id="songPick" aria-label="Choose practice song">
+          <span class="song-btn-info">
+            <span class="t" id="songTitle">Pick a song</span>
+            <span class="m" id="songMeta">Tap to browse songs</span>
+          </span>
+          <span class="song-btn-cta">Songs ▾</span>
+        </button>
         <div class="stats">
           <div class="stat"><b id="stScore">0</b><small>Score</small></div>
           <div class="stat"><b id="stAcc">–</b><small>Accuracy</small></div>
@@ -528,6 +542,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
           <button class="btn" id="takePlay" disabled>Play take</button>
           <button class="btn" id="takeSaveSong" disabled>Save as practice song</button>
           <button class="btn" id="takeAudio" disabled>Save audio file</button>
+          <button class="btn danger" id="takeDelete" disabled>Delete take</button>
         </div>
         <div class="name-row" id="nameRow" hidden>
           <input class="text-in" id="songNameIn" maxlength="40" placeholder="Song name" aria-label="Song name">
@@ -652,6 +667,8 @@ const PRESETS = [
   { id: 'lofikeys', name: 'Lo-Fi Keys', cat: 'Keys', wave: 'triangle', detune: 8, cutoff: 1400, reso: 1, attack: 0.01, decay: 0.5, sustain: 0.4, release: 0.6, delayMix: 0.25, delayTime: 0.3, feedback: 0.3, lfoDepth: 14, lfoRate: 0.8 },
   { id: 'drive', name: 'Night Drive', cat: 'Leads', wave: 'sawtooth', detune: 24, cutoff: 3800, reso: 2.5, attack: 0.05, decay: 0.3, sustain: 0.8, release: 0.8, delayMix: 0.45, delayTime: 0.42, feedback: 0.5, lfoDepth: 4, lfoRate: 6 },
   { id: 'choir', name: 'Snow Choir', cat: 'Pads', wave: 'triangle', detune: 30, cutoff: 2400, reso: 1.5, attack: 0.6, decay: 0.5, sustain: 0.9, release: 2.2, delayMix: 0.5, delayTime: 0.5, feedback: 0.5, lfoDepth: 8, lfoRate: 3 },
+  { id: 'piano', name: 'Felt Piano', cat: 'Keys', wave: 'triangle', detune: 5, cutoff: 2600, reso: 0.9, attack: 0.004, decay: 1.2, sustain: 0.25, release: 0.8, delayMix: 0.18, delayTime: 0.3, feedback: 0.3, lfoDepth: 0, lfoRate: 5 },
+  { id: 'pluck', name: 'Pluck', cat: 'Keys', wave: 'sawtooth', detune: 6, cutoff: 3200, reso: 2, attack: 0.003, decay: 0.35, sustain: 0.05, release: 0.3, delayMix: 0.22, delayTime: 0.34, feedback: 0.35, lfoDepth: 0, lfoRate: 5 },
   { id: 'chip', name: 'Chip Tune', cat: 'Leads', wave: 'square', detune: 0, cutoff: 12000, reso: 0.7, attack: 0.003, decay: 0.1, sustain: 0.8, release: 0.1, delayMix: 0.15, delayTime: 0.15, feedback: 0.25, lfoDepth: 0, lfoRate: 5 }
 ];
 const PKEYS = ['wave', 'detune', 'cutoff', 'reso', 'attack', 'decay', 'sustain', 'release', 'delayMix', 'delayTime', 'feedback', 'lfoDepth', 'lfoRate'];
@@ -685,31 +702,93 @@ const ODE_A = 'A4/1 A4/1 A#4/1 C5/1 C5/1 A#4/1 A4/1 G4/1 F4/1 F4/1 G4/1 A4/1';
 const ODE_B = ODE_A + ' G4/1.5 F4/.5 F4/2';
 const PSYCH = PRESETS[1];
 const tame = (o) => Object.assign(pick(PSYCH), o, { name: 'Psych Lead' });
-const ARP = [0, 3, 7, 12, 7, 3, 0, 7, 5, 8, 12, 17, 12, 8, 7, 3, 0, 3, 7, 12, 15, 12, 7, 3, 5, 8, 12, 17, 15, 12, 8, 7, 0];
+const MARY = 'E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/2 D4/1 D4/1 D4/2 E4/1 G4/1 G4/2 E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/1 E4/1 D4/1 D4/1 E4/1 D4/1 C4/4';
+const HCB = 'E4/1 D4/1 C4/2 E4/1 D4/1 C4/2 C4/.5 C4/.5 C4/.5 C4/.5 D4/.5 D4/.5 D4/.5 D4/.5 E4/1 D4/1 C4/2';
+const JB = 'E4/1 E4/1 E4/2 E4/1 E4/1 E4/2 E4/1 G4/1 C4/1.5 D4/.5 E4/4 F4/1 F4/1 F4/1.5 F4/.5 F4/1 E4/1 E4/1 E4/.5 E4/.5';
+const GRACE = 'C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 F4/2 D4/1 C4/2 C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 C5/3 C5/2 A4/1 C5/1.5 A4/.5 F4/1 A4/2 G4/1 F4/2 D4/1 C4/2 C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 F4/3';
+const GREEN_V = 'A4/1 C5/2 D5/1 E5/1.5 F5/.5 E5/1 D5/2 B4/1 G4/1.5 A4/.5 B4/1 C5/2 A4/1 A4/1.5 G#4/.5 A4/1 B4/2 G#4/1 E4/2 A4/1 C5/2 D5/1 E5/1.5 F5/.5 E5/1 D5/2 B4/1 G4/1.5 A4/.5 B4/1 C5/1.5 B4/.5 A4/1 G#4/1.5 F#4/.5 G#4/1 A4/3 A4/2';
+const GREEN_C = 'G5/3 G5/1.5 F#5/.5 E5/1 D5/2 B4/1 G4/1.5 A4/.5 B4/1 C5/2 A4/1 A4/1.5 G#4/.5 A4/1 B4/2 G#4/1 E4/3 G5/3 G5/1.5 F#5/.5 E5/1 D5/2 B4/1 G4/1.5 A4/.5 B4/1 C5/1.5 B4/.5 A4/1 G#4/1.5 F#4/.5 G#4/1 A4/3 A4/3';
+const ELISE = 'E5/.5 D#5/.5 E5/.5 D#5/.5 E5/.5 B4/.5 D5/.5 C5/.5 A4/1 r/.5 C4/.5 E4/.5 A4/.5 B4/1 r/.5 E4/.5 G#4/.5 B4/.5 C5/1 r/.5 E4/.5 E5/.5 D#5/.5 E5/.5 D#5/.5 E5/.5 B4/.5 D5/.5 C5/.5 A4/1 r/.5 C4/.5 E4/.5 A4/.5 B4/1 r/.5 E4/.5 C5/.5 B4/.5 A4/2';
+const MK = 'A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/1 D#5/.5 B4/.5 D#5/1 D5/.5 A#4/.5 D5/1 A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/.5 A5/.5 G5/.5 E5/.5 C5/.5 E5/.5 G5/2';
+const CANON = 'F#5/1 E5/1 D5/1 C#5/1 B4/1 A4/1 B4/1 C#5/1 D5/1 C#5/1 B4/1 A4/1 G4/1 F#4/1 G4/1 E4/1 D4/.5 F#4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 F#4/.5 E4/.5 D4/.5 B4/.5 D5/.5 A4/.5 G4/.5 B4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 E4/.5 C#5/.5 D5/.5 F#5/.5 E5/.5 A4/.5 B4/.5 G4/.5 A4/.5 F#4/.5 D4/.5 D5/.5 D5/1.5';
+const LULLABY = 'C4/1 E4/1 G4/1 C5/1.5 B4/.5 G4/1 E4/1.5 r/.5 F4/1 A4/1 G4/1 E4/1 D4/1 C4/2 r/1 E4/1 G4/1 A4/1 C5/1.5 D5/.5 C5/1 A4/1 G4/2 F4/1 A4/1 G4/1 E4/1 F4/1 D4/1 E4/2 r/1 C4/1 E4/1 G4/1 C5/1.5 B4/.5 A4/1 G4/1 F4/1 E4/1 D4/1 G4/1 C4/3';
+const AR = { a: [0, 3, 7, 12, 7, 3, 0, 7], b: [5, 8, 12, 17, 12, 8, 7, 3], c: [0, 3, 7, 12, 15, 12, 7, 3], d: [5, 8, 12, 17, 15, 12, 8, 7], e: [2, 5, 9, 14, 9, 5, 2, 9], f: [7, 11, 14, 17, 14, 11, 7, 11], g: [0, 3, 7, 12, 15, 17, 15, 12] };
+const ARP = [].concat(AR.a, AR.b, AR.c, AR.d, AR.e, AR.f, AR.a, AR.b, AR.c, AR.g, [0]);
 
 const SONGS = [
-  { id: 'twinkle', title: 'Twinkle Twinkle', by: 'Traditional', diff: 'easy', bpm: 96, notes: S('C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2') },
-  { id: 'mary', title: 'Mary Had a Little Lamb', by: 'Traditional', diff: 'easy', bpm: 104, notes: S('E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/2 D4/1 D4/1 D4/2 E4/1 G4/1 G4/2 E4/1 D4/1 C4/1 D4/1 E4/1 E4/1 E4/1 E4/1 D4/1 D4/1 E4/1 D4/1 C4/4') },
-  { id: 'hotcross', title: 'Hot Cross Buns', by: 'Traditional', diff: 'easy', bpm: 96, notes: S('E4/1 D4/1 C4/2 E4/1 D4/1 C4/2 C4/.5 C4/.5 C4/.5 C4/.5 D4/.5 D4/.5 D4/.5 D4/.5 E4/1 D4/1 C4/2') },
-  { id: 'jingle', title: 'Jingle Bells', by: 'J. Pierpont', diff: 'easy', bpm: 116, notes: S('E4/1 E4/1 E4/2 E4/1 E4/1 E4/2 E4/1 G4/1 C4/1.5 D4/.5 E4/4 F4/1 F4/1 F4/1.5 F4/.5 F4/1 E4/1 E4/1 E4/.5 E4/.5 E4/1 D4/1 D4/1 E4/1 D4/2 G4/2') },
-  { id: 'squirrel', title: "Chippy's Lullaby", by: 'Best T original', diff: 'easy', bpm: 100, notes: S('C4/1 E4/1 G4/1 C5/1.5 B4/1 G4/1 E4/1.5 F4/1 A4/1 G4/1 E4/1 D4/1 C4/2') },
+  { id: 'twinkle', title: 'Twinkle Twinkle', by: 'Traditional', diff: 'easy', bpm: 96, preset: 'bell', notes: S('C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 G4/1 G4/1 F4/1 F4/1 E4/1 E4/1 D4/2 C4/1 C4/1 G4/1 G4/1 A4/1 A4/1 G4/2 F4/1 F4/1 E4/1 E4/1 D4/1 D4/1 C4/2') },
+  { id: 'mary', title: 'Mary Had a Little Lamb', by: 'Traditional · two verses', diff: 'easy', bpm: 104, preset: 'chip', notes: S(MARY + ' ' + MARY) },
+  { id: 'hotcross', title: 'Hot Cross Buns', by: 'Traditional · three times round', diff: 'easy', bpm: 96, preset: 'lofikeys', notes: S(HCB + ' ' + HCB + ' ' + HCB) },
+  { id: 'jingle', title: 'Jingle Bells', by: 'J. Pierpont · full chorus', diff: 'easy', bpm: 116, preset: 'bell', notes: S(JB + ' E4/1 D4/1 D4/1 E4/1 D4/2 G4/2 ' + JB + ' G4/1 G4/1 F4/1 D4/1 C4/4') },
+  { id: 'squirrel', title: "Chippy's Lullaby", by: 'Best T original', diff: 'easy', bpm: 100, preset: 'choir', notes: S(LULLABY) },
 
-  { id: 'ode', title: 'Ode to Joy', by: 'Beethoven', diff: 'medium', bpm: 108, notes: S(ODE_A + ' A4/1.5 G4/.5 G4/2 ' + ODE_B + ' G4/1 G4/1 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 G4/1 F4/1 G4/1 C4/2 ' + ODE_B) },
-  { id: 'grace', title: 'Amazing Grace', by: 'Traditional', diff: 'medium', bpm: 84, notes: S('C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 F4/2 D4/1 C4/2 C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 C5/3 C5/2 A4/1 C5/1.5 A4/.5 F4/1 A4/2 G4/1 F4/2 D4/1 C4/2 C4/1 F4/2 A4/.5 F4/.5 A4/2 G4/1 F4/3') },
-  { id: 'gymno', title: 'Gymnopédie No. 1', by: 'Satie (opening)', diff: 'medium', bpm: 84, notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
-  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala (riff)', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 }),
-    notes: fromMs([[1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520], [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 600]]) },
-  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala (hook)', diff: 'medium', bpm: 120, patch: tame({ wave: 'square', detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 }),
-    notes: fromMs([[13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450], [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 550]]) },
-  { id: 'borderline', title: 'Borderline', by: 'Tame Impala (lead)', diff: 'medium', bpm: 120, patch: tame({ wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 }),
-    notes: fromMs([[9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420], [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 550]]) },
-  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala (hook)', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }),
-    notes: fromMs([[14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450], [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 650]]) },
+  { id: 'ode', title: 'Ode to Joy', by: 'Beethoven', diff: 'medium', bpm: 108, preset: 'piano', notes: S(ODE_A + ' A4/1.5 G4/.5 G4/2 ' + ODE_B + ' G4/1 G4/1 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 F4/1 G4/1 A4/.5 A#4/.5 A4/1 G4/1 F4/1 G4/1 C4/2 ' + ODE_B) },
+  { id: 'greensleeves', title: 'Greensleeves', by: 'Traditional', diff: 'medium', bpm: 108, preset: 'pluck', notes: S(GREEN_V + ' ' + GREEN_C) },
+  { id: 'grace', title: 'Amazing Grace', by: 'Traditional · two verses', diff: 'medium', bpm: 84, preset: 'warmpad', notes: S(GRACE + ' r/1 ' + GRACE) },
+  { id: 'gymno', title: 'Gymnopédie No. 1', by: 'Satie (opening)', diff: 'medium', bpm: 84, preset: 'piano', notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
+  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · full riff & verse', diff: 'medium', bpm: 117, patch: tame({ wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 }),
+    notes: fromMs([
+      // Main bass/clav riff (Pass 1)
+      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
+      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
+      // Main bass/clav riff (Pass 2)
+      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
+      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
+      // Verse vocal melody ("Someone said they left together...")
+      [8, 300], [8, 300], [6, 300], [4, 300], [6, 420], [4, 300], [1, 520],
+      [8, 300], [11, 300], [8, 300], [6, 300], [4, 420], [6, 300], [4, 650]
+    ]) },
+  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · extended hook', diff: 'medium', bpm: 125, patch: tame({ wave: 'square', detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 }),
+    notes: fromMs([
+      // Hook phrase 1
+      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
+      [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 520],
+      // Hook phrase 2
+      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
+      [9, 220], [11, 220], [13, 330], [14, 220], [13, 220], [11, 330], [9, 520],
+      // Synth outro climb
+      [6, 240], [9, 240], [11, 240], [13, 360], [16, 360], [14, 240], [13, 240], [11, 360], [9, 240], [8, 240], [6, 650]
+    ]) },
+  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · full lead & chorus', diff: 'medium', bpm: 118, patch: tame({ wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 }),
+    notes: fromMs([
+      // Main flute/synth lead (Pass 1)
+      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
+      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
+      // Main flute/synth lead (Pass 2)
+      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
+      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
+      // Chorus ("Gone a little far this time...")
+      [12, 320], [11, 320], [9, 320], [7, 450], [9, 320], [12, 320], [14, 480],
+      [16, 320], [14, 320], [12, 320], [11, 320], [9, 650]
+    ]) },
+  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · chorus & verse', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }),
+    notes: fromMs([
+      // Chorus Pass 1 ("It feels like I only go backwards baby...")
+      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
+      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 600],
+      // Chorus Pass 2
+      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
+      [5, 300], [7, 300], [9, 350], [11, 300], [9, 350], [7, 350], [7, 600],
+      // Verse turnaround ("Every part of me says go ahead...")
+      [7, 300], [9, 300], [11, 350], [12, 350], [11, 300], [9, 300], [7, 450],
+      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 650]
+    ]) },
+  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · psych synth theme', diff: 'medium', bpm: 122, patch: tame({ wave: 'sawtooth', detune: 22, cutoff: 2100, reso: 4.8, delayMix: 0.44, lfoDepth: 14, lfoRate: 5.2 }),
+    notes: S(
+      // Phrase 1: Chromatic vampire hook in D minor / harmonic minor
+      'D4/.5 F4/.5 A4/.5 Bb4/1 A4/.5 G#4/.5 A4/1 F4/.5 D4/1.5 ' +
+      'D4/.5 F4/.5 A4/.5 C5/1 Bb4/.5 A4/.5 G4/1 E4/.5 C#4/1.5 ' +
+      // Phrase 2: Octave jump & eerie descent
+      'D4/.5 F4/.5 A4/.5 D5/1 C#5/.5 C5/.5 B4/.5 Bb4/.5 A4/1 F4/.5 D4/1 ' +
+      'G4/.5 A4/.5 Bb4/1 A4/.5 G4/.5 F4/.5 E4/.5 F4/.5 G4/.5 A4/2 ' +
+      // Phrase 3: Driving hypnotic synth bridge
+      'A4/.5 A4/.5 Bb4/.5 A4/.5 G4/.5 F4/.5 E4/.5 C#4/.5 D4/.5 F4/.5 A4/.5 C#5/.5 D5/2'
+    ) },
 
-  { id: 'elise', title: 'Für Elise', by: 'Beethoven', diff: 'hard', bpm: 138, notes: S('E5/.5 D#5/.5 E5/.5 D#5/.5 E5/.5 B4/.5 D5/.5 C5/.5 A4/1 r/.5 C4/.5 E4/.5 A4/.5 B4/1 r/.5 E4/.5 G#4/.5 B4/.5 C5/1 r/.5 E4/.5 E5/.5 D#5/.5 E5/.5 D#5/.5 E5/.5 B4/.5 D5/.5 C5/.5 A4/1 r/.5 C4/.5 E4/.5 A4/.5 B4/1 r/.5 E4/.5 C5/.5 B4/.5 A4/2') },
-  { id: 'mountain', title: 'In the Hall of the Mountain King', by: 'Grieg', diff: 'hard', bpm: 150, notes: S('A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/1 D#5/.5 B4/.5 D#5/1 D5/.5 A#4/.5 D5/1 A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/.5 A5/.5 G5/.5 E5/.5 C5/.5 E5/.5 G5/2 A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/1 D#5/.5 B4/.5 D#5/1 D5/.5 A#4/.5 D5/1 A4/.5 B4/.5 C5/.5 D5/.5 E5/.5 C5/.5 E5/.5 A5/.5 G5/.5 E5/.5 C5/.5 E5/.5 G5/2') },
-  { id: 'canon', title: 'Canon in D', by: 'Pachelbel', diff: 'hard', bpm: 72, notes: S('F#5/1 E5/1 D5/1 C#5/1 B4/1 A4/1 B4/1 C#5/1 D5/1 C#5/1 B4/1 A4/1 G4/1 F#4/1 G4/1 E4/1 D4/.5 F#4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 F#4/.5 E4/.5 D4/.5 B4/.5 D5/.5 A4/.5 G4/.5 B4/.5 A4/.5 G4/.5 F#4/.5 D4/.5 E4/.5 C#5/.5 D5/.5 F#5/.5 E5/.5 A4/.5 B4/.5 G4/.5 A4/.5 F#4/.5 D4/.5 D5/.5 D5/1.5') },
-  { id: 'arp', title: 'Neon Night Arp', by: 'Best T original', diff: 'hard', bpm: 132, notes: fromSemis(ARP, 0.5, 2) }
+  { id: 'elise', title: 'Für Elise', by: 'Beethoven · theme twice', diff: 'hard', bpm: 138, preset: 'piano', notes: S(ELISE + ' ' + ELISE) },
+  { id: 'mountain', title: 'In the Hall of the Mountain King', by: 'Grieg', diff: 'hard', bpm: 150, preset: 'bass', notes: S(MK + ' ' + MK + ' ' + MK) },
+  { id: 'canon', title: 'Canon in D', by: 'Pachelbel · two passes', diff: 'hard', bpm: 72, preset: 'pluck', notes: S(CANON + ' ' + CANON) },
+  { id: 'arp', title: 'Neon Night Arp', by: 'Best T original', diff: 'hard', bpm: 132, preset: 'drive', notes: fromSemis(ARP, 0.5, 2) }
 ];
 let mySongs = store.get('bt_mysongs', []);
 const allSongs = () => SONGS.concat(mySongs);
@@ -1082,6 +1161,7 @@ function renderPresets() {
   });
 }
 function loadPreset(p, silent) {
+  L.prevSound = null;
   basePreset = p; patch = pick(p); edited = false;
   if (p.id) store.set('bt_preset', p.id);
   applyPatch(); syncControls(); renderPresets();
@@ -1167,6 +1247,10 @@ function setTab(t) {
   $$('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
   $$('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== t; });
   if (t !== 'learn' && L.state === 'playing') learnPause();
+  if (t !== 'learn' && L.prevSound) {
+    if (!edited) { restoreSound(L.prevSound); toast('Sound back to ' + (basePreset ? basePreset.name : 'your sound')); }
+    L.prevSound = null;
+  }
   if (t === 'learn' && !L.song) selectSong(SONGS[0], true);
   if (t !== 'learn') setGuide([]); else updateGuide();
   requestAnimationFrame(() => { layoutKeyboard(); sizeCanvases(); });
@@ -1314,11 +1398,18 @@ function renderRec() {
   $('#quickRec').classList.toggle('recording', rec.on);
   $('#quickRec').setAttribute('aria-label', rec.on ? 'Stop recording' : 'Start recording');
   $('#recStatus').textContent = rec.on ? 'Recording. Play anything, then tap stop.' : 'Records your notes and the beat.';
-  const has = rec.take && rec.take.downs > 0;
+  const has = !!(rec.take && rec.take.downs > 0);
+  const hasAnyTake = !!(rec.take || rec.audioUrl);
   $('#takePlay').disabled = !has || rec.on;
   $('#takeSaveSong').disabled = !has || rec.take.downs < 2 || rec.on;
-  if (rec.on) $('#takeAudio').disabled = true;
-  if (rec.take) $('#takeInfo').textContent = rec.take.downs ? 'Take length ' + fmtClock(rec.take.dur) + ' · ' + rec.take.downs + ' notes' : 'That take had no notes in it.';
+  $('#takeDelete').disabled = !hasAnyTake || rec.on;
+  if ($('#takeDelete').disabled) resetDelete();
+  if (rec.on || !rec.audioUrl) $('#takeAudio').disabled = true;
+  if (rec.take) {
+    $('#takeInfo').textContent = rec.take.downs ? 'Take length ' + fmtClock(rec.take.dur) + ' · ' + rec.take.downs + ' notes' : 'That take had no notes in it.';
+  } else {
+    $('#takeInfo').textContent = 'Nothing recorded yet. Tap the red button, play something, then tap it again.';
+  }
   if (inFrame) $('#takeAudio').title = 'Audio files can only be saved when you open the HTML file directly';
 }
 function takePlay() {
@@ -1364,12 +1455,35 @@ $('#takeAudio').addEventListener('click', () => {
   const a = document.createElement('a'); a.href = rec.audioUrl; a.download = 'best-t-take-' + Date.now() + '.' + (rec.audioExt || 'webm');
   document.body.appendChild(a); a.click(); a.remove();
 });
+let deleteTimer = null;
+function resetDelete() {
+  clearTimeout(deleteTimer);
+  const b = $('#takeDelete'); b.classList.remove('confirm'); b.textContent = 'Delete take';
+}
+$('#takeDelete').addEventListener('click', () => {
+  const b = $('#takeDelete');
+  if (!b.classList.contains('confirm')) {
+    b.classList.add('confirm'); b.textContent = 'Tap again to delete';
+    clearTimeout(deleteTimer); deleteTimer = setTimeout(resetDelete, 3000);
+    return;
+  }
+  resetDelete();
+  takeStop();
+  if (rec.audioUrl) { URL.revokeObjectURL(rec.audioUrl); rec.audioUrl = null; }
+  rec.take = null;
+  rec.events = [];
+  rec.chunks = [];
+  $('#recTime').textContent = '00:00';
+  $('#nameRow').hidden = true;
+  renderRec();
+  toast('Recording deleted');
+});
 
 /* =========================================================
    LEARN MODE
    ========================================================= */
 const LEAD = 2.0, WIN = 0.22, PERFECT = 0.09;
-const L = { song: null, notes: [], mode: 'wait', speed: 1, state: 'idle', t: -LEAD, last: 0, demo: false, score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, end: 0, fx: [], undo: null };
+const L = { song: null, notes: [], mode: 'wait', speed: 1, state: 'idle', t: -LEAD, last: 0, demo: false, score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, end: 0, fx: [], undo: null, prevSound: null };
 function secNotes(song) {
   const k = 60 / song.bpm;
   return song.notes.map(n => ({ s: n.s, t: n.t * k, d: Math.max(0.1, n.d * k), state: 0, on: false, off: 0 }));
@@ -1382,17 +1496,25 @@ function resetLearn() {
   $('#results').hidden = true;
   renderLearnButtons(); updateGuide(); updateHud(true);
 }
+function songSound(song) {
+  if (song.patch) return { base: { id: null, name: song.patch.name || 'Psych Lead', cat: 'Leads' }, patch: pick(song.patch) };
+  const p = song.preset && PRESETS.find(x => x.id === song.preset);
+  return p ? { base: p, patch: pick(p) } : null;
+}
+function restoreSound(prev) { basePreset = prev.base; patch = prev.patch; edited = prev.edited; applyPatch(); syncControls(); renderPresets(); }
 function selectSong(song, quiet) {
   if (L.state === 'playing') learnStop();
   L.song = song;
   $('#songTitle').textContent = song.title;
-  $('#songMeta').textContent = song.by + ' · ' + diffName(song.diff) + ' · ' + song.notes.length + ' notes';
+  const snd = songSound(song);
+  $('#songMeta').textContent = diffName(song.diff) + ' · ' + song.notes.length + ' notes' + (snd ? ' · ' + snd.base.name : '');
   fitWindow(song.notes);
-  if (song.patch && !quiet) {
+  const sp = songSound(song);
+  if (sp && !(basePreset && sp.base.id && basePreset.id === sp.base.id && !edited)) {
     const prev = { base: basePreset, patch: pick(patch), edited };
-    basePreset = { id: null, name: song.patch.name || 'Psych Lead', cat: 'Leads' };
-    patch = pick(song.patch); edited = false; applyPatch(); syncControls();
-    toast('Loaded ' + basePreset.name + ' for this song', 'Undo', () => { basePreset = prev.base; patch = prev.patch; edited = prev.edited; applyPatch(); syncControls(); });
+    if (!L.prevSound) L.prevSound = prev;
+    basePreset = sp.base; patch = sp.patch; edited = false; applyPatch(); syncControls(); renderPresets();
+    if (!quiet) toast('Sound set to ' + basePreset.name + ' for this song', 'Undo', () => { restoreSound(prev); L.prevSound = null; });
   }
   if (mySongs.some(s => s.id === song.id)) { /* recorded songs default to Wait mode */ setMode('wait'); }
   else if (song.diff === 'easy') setMode('wait');
@@ -1534,7 +1656,7 @@ function renderSongs() {
     if (L.song && L.song.id === s.id) b.setAttribute('aria-current', 'true');
     b.innerHTML = '<span><span class="st"></span><span class="sm"></span></span><span class="stars"></span>';
     b.querySelector('.st').textContent = s.title;
-    b.querySelector('.sm').textContent = s.by + ' · ' + s.notes.length + ' notes';
+    const sd = songSound(s); b.querySelector('.sm').textContent = s.by + ' · ' + s.notes.length + ' notes' + (sd ? ' · ' + sd.base.name : '');
     const st = best[s.id] ? best[s.id].stars : 0;
     b.querySelector('.stars').textContent = '★'.repeat(st) + '☆'.repeat(3 - st);
     b.addEventListener('click', () => { closeSheets(); selectSong(s); });
