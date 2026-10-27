@@ -1372,6 +1372,10 @@
       <div class="control-row">
         <div class="deck-row">
           <select id="songSelect" class="synth-select">
+            <option value="lessiknow">🌀 The Less I Know The Better</option>
+            <option value="letithappen">🪩 Let It Happen (Synth Hook)</option>
+            <option value="borderline">🌴 Borderline (Main Flute/Lead)</option>
+            <option value="feelslike">🎈 Feels Like We Only Go Backwards</option>
             <option value="twinkle">⭐ Twinkle Twinkle</option>
             <option value="ode">🎻 Ode to Joy</option>
             <option value="elise">🎹 Für Elise (Theme)</option>
@@ -1983,6 +1987,46 @@
      2. SONG LIBRARY & INTERACTIVE FOLLOW-ALONG TUTOR
      ========================================================= */
   const SONGS = {
+    lessiknow: {
+      name: 'The Less I Know The Better',
+      // Iconic C# minor funk riff (C#4 - E4 - F#4 - G#4 - B4 - C#5)
+      notes: [
+        { s: 1, d: 260 },  { s: 1, d: 260 },  { s: 4, d: 260 },  { s: 6, d: 260 },
+        { s: 8, d: 380 },  { s: 6, d: 260 },  { s: 4, d: 520 },
+        { s: 11, d: 260 }, { s: 13, d: 380 }, { s: 11, d: 260 }, { s: 8, d: 260 },
+        { s: 6, d: 380 },  { s: 4, d: 260 },  { s: 1, d: 600 }
+      ]
+    },
+    letithappen: {
+      name: 'Let It Happen',
+      // Driving synth hook in A major / F# minor
+      notes: [
+        { s: 13, d: 220 }, { s: 13, d: 220 }, { s: 14, d: 220 }, { s: 13, d: 220 },
+        { s: 11, d: 330 }, { s: 9, d: 330 },  { s: 6, d: 450 },
+        { s: 9, d: 220 },  { s: 11, d: 220 }, { s: 13, d: 330 }, { s: 11, d: 220 },
+        { s: 9, d: 220 },  { s: 8, d: 330 },  { s: 6, d: 550 }
+      ]
+    },
+    borderline: {
+      name: 'Borderline',
+      // A minor / Dorian intro flute & synth melody ("Gone a little far...")
+      notes: [
+        { s: 9, d: 280 },  { s: 12, d: 280 }, { s: 14, d: 280 }, { s: 16, d: 420 },
+        { s: 14, d: 280 }, { s: 12, d: 280 }, { s: 9, d: 420 },
+        { s: 7, d: 280 },  { s: 9, d: 280 },  { s: 12, d: 380 }, { s: 11, d: 280 },
+        { s: 9, d: 280 },  { s: 7, d: 380 },  { s: 4, d: 550 }
+      ]
+    },
+    feelslike: {
+      name: 'Feels Like We Only Go Backwards',
+      // Psychedelic chorus vocal/synth hook
+      notes: [
+        { s: 14, d: 400 }, { s: 12, d: 350 }, { s: 11, d: 350 }, { s: 9, d: 350 },
+        { s: 7, d: 450 },  { s: 4, d: 450 },
+        { s: 5, d: 300 },  { s: 7, d: 300 },  { s: 9, d: 350 },  { s: 7, d: 300 },
+        { s: 5, d: 350 },  { s: 4, d: 350 },  { s: 2, d: 650 }
+      ]
+    },
     twinkle: {
       name: 'Twinkle Twinkle',
       notes: [
@@ -2029,6 +2073,14 @@
         { s: 2, d: 350 }, { s: 0, d: 650 }
       ]
     }
+  };
+
+  // Psychedelic synth patches auto-loaded for Tame Impala songs
+  const TAME_PATCHES = {
+    lessiknow:   { wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 },
+    letithappen: { wave: 'square',   detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 },
+    borderline:  { wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 },
+    feelslike:   { wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }
   };
 
   let songMode = 'idle'; // 'idle' | 'follow' | 'demo'
@@ -2155,7 +2207,23 @@
     else startDemoMode();
   });
 
-  document.getElementById('songSelect').addEventListener('change', () => {
+  document.getElementById('songSelect').addEventListener('change', (e) => {
+    const patch = TAME_PATCHES[e.target.value];
+    if (patch) {
+      currentWave = patch.wave;
+      document.querySelectorAll('.wave-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.wave === patch.wave);
+      });
+      document.getElementById('detune').value = patch.detune;
+      document.getElementById('cutoff').value = patch.cutoff;
+      document.getElementById('resonance').value = patch.reso;
+      document.getElementById('delayMix').value = patch.delayMix;
+      if (filterNode && audioCtx) {
+        filterNode.frequency.setTargetAtTime(patch.cutoff, audioCtx.currentTime, 0.02);
+        filterNode.Q.setTargetAtTime(patch.reso, audioCtx.currentTime, 0.02);
+        delayWetGain.gain.setTargetAtTime(patch.delayMix, audioCtx.currentTime, 0.02);
+      }
+    }
     if (songMode === 'follow') startFollowMode();
     else if (songMode === 'demo') startDemoMode();
   });
