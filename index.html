@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#17110e">
+<meta name="theme-color" content="#d6d7db">
 <title>Best T Synth</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -407,6 +407,16 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
   .sound-grid { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
   .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+.rotate { display: none; position: fixed; inset: 0; z-index: 100; background: var(--bg); color: var(--text); flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
+.rotate-phone { width: 46px; height: 80px; border-radius: 10px; border: 3px solid var(--text); position: relative; animation: turn 2.4s ease-in-out infinite; }
+.rotate-phone span { position: absolute; left: 50%; bottom: 6px; width: 14px; height: 3px; margin-left: -7px; border-radius: 2px; background: var(--text); }
+.rotate-title { margin: 6px 0 0; font-size: 22px; font-weight: 700; }
+.rotate-sub { margin: 0; font-size: 14px; color: var(--muted); }
+@keyframes turn { 0%, 20% { transform: rotate(0deg); } 50%, 80% { transform: rotate(-90deg); border-color: var(--accent); } 100% { transform: rotate(0deg); } }
+@media (orientation: portrait) and (pointer: coarse) {
+  .rotate { display: flex; }
+  .app, .backdrop, .toast { display: none !important; }
+}
 /* Sound panel open: keyboard shrinks to a short strip so the settings get the screen */
 .app.sound-open { --kb-h: clamp(64px, 14dvh, 110px); }
 .app.sound-open .foot { display: none; }
@@ -419,7 +429,13 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 </style>
 </head>
 <body>
+<script>try { document.documentElement.dataset.skin = JSON.parse(localStorage.getItem('bt_skin2')) || 'studio'; } catch (e) { document.documentElement.dataset.skin = 'studio'; }</script>
 <canvas id="snow" aria-hidden="true"></canvas>
+<div class="rotate" role="alert">
+  <div class="rotate-phone" aria-hidden="true"><span></span></div>
+  <p class="rotate-title">Turn your phone sideways</p>
+  <p class="rotate-sub">Best T plays in landscape</p>
+</div>
 
 <div class="app" id="app" data-tab="play">
   <h1 class="sr-only">Best T Poly Synth</h1>
@@ -531,7 +547,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
       <div class="beat-top">
         <button class="play-btn" id="beatPlay" aria-label="Play beat"></button>
         <div class="bpm"><b id="bpmBig">85</b><small>BPM</small></div>
-        <input type="range" id="bpmRange" min="60" max="170" step="1" value="85" aria-label="Tempo">
+        <input type="range" id="bpmRange" min="60" max="180" step="1" value="85" aria-label="Tempo">
         <button class="btn" id="beatReset">Reset pattern</button>
       </div>
       <div class="grid-rows" id="beatGrid"></div>
@@ -1335,15 +1351,15 @@ const SKINS = [
   { id: 'vintage', name: 'Vintage', sub: 'Walnut, cream, needle meter', bg: '#1b1714', dots: ['#efe4cc', '#d9822b', '#6b3a22'] },
   { id: 'studio', name: 'Studio', sub: 'Flat and precise', bg: '#f3f3f1', dots: ['#ff5a1f', '#2457ff', '#ffc21a'] }
 ];
-let skin = store.get('bt_skin', 'furrynorth');
-if (!SKINS.some(s => s.id === skin)) skin = 'furrynorth';
+let skin = store.get('bt_skin2', 'studio');
+if (!SKINS.some(s => s.id === skin)) skin = 'studio';
 let colors = {};
 function readColors() {
   const cs = getComputedStyle(root);
   ['--scope-bg', '--scope-line', '--accent', '--accent2', '--guide', '--muted', '--text', '--good', '--bad', '--base', '--line', '--panel'].forEach(k => { colors[k] = cs.getPropertyValue(k).trim(); });
 }
-function setSkin(id) {
-  skin = id; root.dataset.skin = id; store.set('bt_skin', id);
+function setSkin(id, save) {
+  skin = id; root.dataset.skin = id; if (save) store.set('bt_skin2', id);
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim());
   readColors(); renderSkins();
   $('#scopeLabel').textContent = id === 'vintage' ? 'Level' : 'Scope';
@@ -1360,7 +1376,7 @@ function renderSkins() {
     const sw = b.querySelector('.swatch'); sw.style.background = s.bg;
     s.dots.forEach(c => { const d = document.createElement('span'); d.style.cssText = 'width:16px;height:16px;border-radius:50%;margin:0 3px;background:' + c; sw.appendChild(d); });
     b.querySelector('b').textContent = s.name; b.querySelector('small').textContent = s.sub;
-    b.addEventListener('click', () => setSkin(s.id));
+    b.addEventListener('click', () => setSkin(s.id, true));
     host.appendChild(b);
   });
 }
@@ -1393,7 +1409,16 @@ const BEATS = {
   synthwave: { name: '80s Synthwave', bpm: 112, steps: 16, k: '1000100010001000', s: '0000100000001000', h: '1111111111111111' },
   boombap: { name: '90s Boom Bap', bpm: 92, steps: 16, k: '1010000001100000', s: '0000100100001000', h: '1010101010101010' },
   house: { name: 'Club House', bpm: 124, steps: 16, k: '1000100010001000', s: '0000100000001000', h: '0010001000100011' },
-  waltz: { name: 'Furry Waltz', bpm: 105, steps: 12, k: '100000000000', s: '000010001000', h: '101010101010' }
+  waltz: { name: 'Furry Waltz', bpm: 105, steps: 12, k: '100000000000', s: '000010001000', h: '101010101010' },
+  rock: { name: 'Rock', bpm: 120, steps: 16, k: '1000000010100000', s: '0000100000001000', h: '1010101010101010' },
+  funk: { name: 'Funk', bpm: 100, steps: 16, k: '1000000100100000', s: '0000100101001000', h: '1111111111111111' },
+  disco: { name: 'Disco', bpm: 118, steps: 16, k: '1000100010001000', s: '0000100000001000', h: '0010001000100010' },
+  techno: { name: 'Techno', bpm: 130, steps: 16, k: '1000100010001000', s: '0000100000001000', h: '1011101110111011' },
+  trap: { name: 'Trap', bpm: 140, steps: 16, k: '1000000100100000', s: '0000000010000000', h: '1010101011111010' },
+  dembow: { name: 'Reggaeton', bpm: 95, steps: 16, k: '1000100010001000', s: '0001001000010010', h: '1010101010101010' },
+  afrobeat: { name: 'Afrobeat', bpm: 105, steps: 16, k: '1000001000101000', s: '0000100000001001', h: '1011101110111011' },
+  bossa: { name: 'Bossa Nova', bpm: 120, steps: 16, k: '1000001010000010', s: '1001001000100100', h: '1111111111111111' },
+  dnb: { name: 'Drum & Bass', bpm: 172, steps: 16, k: '1000000000100000', s: '0000100000001000', h: '1010101010101010' }
 };
 const ROWS = [['k', 'Kick'], ['s', 'Snare'], ['h', 'Hat']];
 let beatEdits = store.get('bt_beats', {});
@@ -1428,7 +1453,7 @@ function beatStop() {
   renderBeatState(); paintStep(-1); jam();
 }
 const beatToggle = () => { beat.playing ? beatStop() : beatStart(); };
-function setBpm(v) { beat.bpm = clamp(Math.round(v), 60, 170); $('#bpmMini').textContent = beat.bpm; $('#bpmBig').textContent = beat.bpm; $('#bpmRange').value = beat.bpm; }
+function setBpm(v) { beat.bpm = clamp(Math.round(v), 60, 180); $('#bpmMini').textContent = beat.bpm; $('#bpmBig').textContent = beat.bpm; $('#bpmRange').value = beat.bpm; }
 const PLAY_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>';
 const STOP_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/></svg>';
 function renderBeatState() {
@@ -1969,6 +1994,10 @@ function frame(now) {
    ========================================================= */
 window.addEventListener('resize', () => { layoutKeyboard(); sizeCanvases(); if (!$('#soundSheet').hidden) placeSoundSheet(); });
 if (window.ResizeObserver) new ResizeObserver(() => { rectsDirty = true; }).observe($('.kb-wrap'));
+const portraitQ = window.matchMedia('(orientation: portrait) and (pointer: coarse)');
+const onOrient = () => { if (portraitQ.matches) { stopHold(); allNotesOff(); if (L.state === 'playing') learnPause(); } else requestAnimationFrame(() => { layoutKeyboard(); sizeCanvases(); }); };
+if (portraitQ.addEventListener) portraitQ.addEventListener('change', onOrient); else if (portraitQ.addListener) portraitQ.addListener(onOrient);
+document.addEventListener('pointerdown', () => { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }, { once: true });
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { learnPause(); stopHold(); allNotesOff(); }
   else if (ctx && ctx.state !== 'running') ctx.resume();
