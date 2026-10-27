@@ -294,6 +294,9 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 
 /* Sheets */
 .backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; padding: max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.head-btns { display: flex; gap: 8px; }
+#soundSheet { bottom: var(--sheet-bottom, 0px); background: rgba(0, 0, 0, 0.35); }
+.wave.layer { height: 36px; font-size: 12px; }
 .sheet { width: 100%; max-width: 980px; max-height: 100%; overflow: auto; background: var(--chassis); color: var(--text); border-radius: calc(var(--radius) + 4px); padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 0 0 1px var(--line), 0 30px 60px rgba(0, 0, 0, 0.5); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .sheet-head h2 { margin: 0; font-family: var(--font-display); font-style: var(--display-style); font-size: 26px; font-weight: 700; }
@@ -573,7 +576,7 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 <!-- SOUND SHEET -->
 <div class="backdrop" id="soundSheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="soundSheetTitle">
-    <div class="sheet-head"><h2 id="soundSheetTitle">Sound</h2><button class="btn primary" data-close>Done</button></div>
+    <div class="sheet-head"><h2 id="soundSheetTitle">Sound</h2><div class="head-btns"><button class="btn" id="hearSound">Hear it</button><button class="btn primary" data-close>Done</button></div></div>
     <div class="sound-grid">
       <div class="card" style="display:flex;flex-direction:column;gap:10px">
         <div class="chips" id="presetCats"></div>
@@ -594,6 +597,8 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
           <div class="card">
             <h3>Wave shape</h3>
             <div class="waves" id="waveBtns"></div>
+            <span class="ctl"><span>Second voice</span></span>
+            <div class="waves" id="layerBtns"></div>
             <label class="ctl"><span>Thickness <output id="o-detune"></output></span><input type="range" id="p-detune" min="0" max="1000"></label>
           </div>
           <div class="card">
@@ -669,9 +674,17 @@ const PRESETS = [
   { id: 'choir', name: 'Snow Choir', cat: 'Pads', wave: 'triangle', detune: 30, cutoff: 2400, reso: 1.5, attack: 0.6, decay: 0.5, sustain: 0.9, release: 2.2, delayMix: 0.5, delayTime: 0.5, feedback: 0.5, lfoDepth: 8, lfoRate: 3 },
   { id: 'piano', name: 'Felt Piano', cat: 'Keys', wave: 'triangle', detune: 5, cutoff: 2600, reso: 0.9, attack: 0.004, decay: 1.2, sustain: 0.25, release: 0.8, delayMix: 0.18, delayTime: 0.3, feedback: 0.3, lfoDepth: 0, lfoRate: 5 },
   { id: 'pluck', name: 'Pluck', cat: 'Keys', wave: 'sawtooth', detune: 6, cutoff: 3200, reso: 2, attack: 0.003, decay: 0.35, sustain: 0.05, release: 0.3, delayMix: 0.22, delayTime: 0.34, feedback: 0.35, lfoDepth: 0, lfoRate: 5 },
-  { id: 'chip', name: 'Chip Tune', cat: 'Leads', wave: 'square', detune: 0, cutoff: 12000, reso: 0.7, attack: 0.003, decay: 0.1, sustain: 0.8, release: 0.1, delayMix: 0.15, delayTime: 0.15, feedback: 0.25, lfoDepth: 0, lfoRate: 5 }
+  { id: 'chip', name: 'Chip Tune', cat: 'Leads', wave: 'square', detune: 0, cutoff: 12000, reso: 0.7, attack: 0.003, decay: 0.1, sustain: 0.8, release: 0.1, delayMix: 0.15, delayTime: 0.15, feedback: 0.25, lfoDepth: 0, lfoRate: 5 },
+  { id: 'rhodes', name: 'Electric Piano', cat: 'Keys', wave: 'sine', osc2: 12, osc2Wave: 'sine', detune: 6, cutoff: 3000, reso: 0.9, attack: 0.005, decay: 0.9, sustain: 0.3, release: 0.6, delayMix: 0.2, delayTime: 0.33, feedback: 0.3, lfoDepth: 5, lfoRate: 4.5 },
+  { id: 'organ', name: 'Drawbar Organ', cat: 'Keys', wave: 'sine', osc2: 19, osc2Wave: 'triangle', detune: 4, cutoff: 5200, reso: 0.8, attack: 0.01, decay: 0.1, sustain: 1, release: 0.08, delayMix: 0.15, delayTime: 0.28, feedback: 0.25, lfoDepth: 8, lfoRate: 6.5 },
+  { id: 'marimba', name: 'Marimba', cat: 'Keys', wave: 'sine', osc2: 24, osc2Wave: 'sine', detune: 2, cutoff: 5000, reso: 1, attack: 0.002, decay: 0.3, sustain: 0, release: 0.25, delayMix: 0.15, delayTime: 0.25, feedback: 0.2, lfoDepth: 0, lfoRate: 5 },
+  { id: 'strings', name: 'String Section', cat: 'Pads', wave: 'sawtooth', osc2: 0, detune: 22, cutoff: 2200, reso: 0.9, attack: 0.45, decay: 0.6, sustain: 0.85, release: 1.2, delayMix: 0.35, delayTime: 0.4, feedback: 0.4, lfoDepth: 6, lfoRate: 5 },
+  { id: 'brass', name: 'Brass Stab', cat: 'Leads', wave: 'sawtooth', osc2: 12, osc2Wave: 'square', detune: 10, cutoff: 1800, reso: 2.5, attack: 0.06, decay: 0.25, sustain: 0.75, release: 0.25, delayMix: 0.15, delayTime: 0.3, feedback: 0.25, lfoDepth: 3, lfoRate: 5.5 },
+  { id: 'flute', name: 'Flute', cat: 'Leads', wave: 'sine', osc2: 12, osc2Wave: 'triangle', detune: 3, cutoff: 4000, reso: 0.8, attack: 0.08, decay: 0.2, sustain: 0.85, release: 0.25, delayMix: 0.25, delayTime: 0.35, feedback: 0.3, lfoDepth: 9, lfoRate: 5.2 },
+  { id: 'subbass', name: 'Sub Bass', cat: 'Bass', wave: 'sine', osc2: -12, osc2Wave: 'sine', detune: 2, cutoff: 600, reso: 0.8, attack: 0.005, decay: 0.3, sustain: 0.9, release: 0.15, delayMix: 0, delayTime: 0.2, feedback: 0.1, lfoDepth: 0, lfoRate: 5 },
+  { id: 'acid', name: 'Acid Bass', cat: 'Bass', wave: 'sawtooth', osc2: -12, osc2Wave: 'square', detune: 4, cutoff: 700, reso: 12, attack: 0.003, decay: 0.2, sustain: 0.4, release: 0.1, delayMix: 0.1, delayTime: 0.25, feedback: 0.25, lfoDepth: 0, lfoRate: 5 },
 ];
-const PKEYS = ['wave', 'detune', 'cutoff', 'reso', 'attack', 'decay', 'sustain', 'release', 'delayMix', 'delayTime', 'feedback', 'lfoDepth', 'lfoRate'];
+const PKEYS = ['wave', 'osc2', 'osc2Wave', 'detune', 'cutoff', 'reso', 'attack', 'decay', 'sustain', 'release', 'delayMix', 'delayTime', 'feedback', 'lfoDepth', 'lfoRate'];
 const pick = (p) => { const o = {}; PKEYS.forEach(k => { o[k] = p[k]; }); return o; };
 let myPresets = store.get('bt_mypresets', []);
 const allPresets = () => PRESETS.concat(myPresets);
@@ -893,7 +906,11 @@ function applyPatch(instant) {
   setP(filter.frequency, patch.cutoff, instant); setP(filter.Q, patch.reso, instant);
   setP(delay.delayTime, patch.delayTime, instant); setP(fb.gain, Math.min(0.85, patch.feedback), instant);
   setP(wet.gain, patch.delayMix, instant); setP(lfo.frequency, patch.lfoRate, instant); setP(lfoGain.gain, patch.lfoDepth, instant);
-  voices.forEach(v => { v.o1.type = v.o2.type = patch.wave; setP(v.o1.detune, -patch.detune); setP(v.o2.detune, patch.detune); });
+  voices.forEach(v => {
+    v.o1.type = patch.wave; v.o2.type = patch.osc2Wave || patch.wave;
+    setP(v.o2.frequency, v.f * Math.pow(2, (patch.osc2 || 0) / 12)); setP(v.g2.gain, patch.osc2 ? 0.6 : 1);
+    setP(v.o1.detune, -patch.detune); setP(v.o2.detune, patch.detune);
+  });
 }
 function noteOn(semi, auto) {
   ensureAudio();
@@ -907,14 +924,15 @@ function noteOn(semi, auto) {
   g.gain.setValueAtTime(0, now);
   g.gain.linearRampToValueAtTime(peak, now + a);
   g.gain.setTargetAtTime(peak * patch.sustain, now + a, Math.max(0.01, patch.decay / 3));
-  const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
-  o1.type = o2.type = patch.wave;
-  o1.frequency.value = o2.frequency.value = f;
+  const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g2 = ctx.createGain();
+  o1.type = patch.wave; o2.type = patch.osc2Wave || patch.wave;
+  o1.frequency.value = f; o2.frequency.value = f * Math.pow(2, (patch.osc2 || 0) / 12);
+  g2.gain.value = patch.osc2 ? 0.6 : 1;
   o1.detune.value = -patch.detune; o2.detune.value = patch.detune;
   lfoGain.connect(o1.detune); lfoGain.connect(o2.detune);
-  o1.connect(g); o2.connect(g); g.connect(synthBus);
+  o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(synthBus);
   o1.start(now); o2.start(now);
-  voices.set(semi, { o1, o2, g });
+  voices.set(semi, { o1, o2, g, g2, f });
   sustained.delete(semi);
   setKey(semi, true);
   if (!auto) { recEvent('down', semi); learnPress(semi); }
@@ -1053,7 +1071,7 @@ const downKeys = new Set();
 window.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.target.closest && e.target.closest('input, textarea')) return;
-  if (anySheetOpen()) { if (e.key === 'Escape') closeSheets(); return; }
+  if (anySheetOpen()) { if (e.key === 'Escape') { closeSheets(); return; } if ($('#soundSheet').hidden) return; }
   const k = e.key.toLowerCase();
   if (e.repeat) return;
   if (k === 'z') { changeOctave(-1); return; }
@@ -1113,11 +1131,11 @@ function makeKnob(key, host, withHint) {
   let startY = 0, startV = 0, id = null;
   knob.addEventListener('pointerdown', e => { e.preventDefault(); id = e.pointerId; startY = e.clientY; startV = m.get(); try { knob.setPointerCapture(id); } catch (err) {} });
   knob.addEventListener('pointermove', e => { if (e.pointerId !== id) return; setMacro(key, clamp(startV + (startY - e.clientY) / 160, 0, 1)); });
-  const end = e => { if (e.pointerId === id) id = null; };
+  const end = e => { if (e.pointerId === id) { id = null; previewSoon(); } };
   knob.addEventListener('pointerup', end); knob.addEventListener('pointercancel', end);
   knob.addEventListener('keydown', e => {
     const step = { ArrowUp: 0.05, ArrowRight: 0.05, ArrowDown: -0.05, ArrowLeft: -0.05 }[e.key];
-    if (step) { e.preventDefault(); setMacro(key, clamp(m.get() + step, 0, 1)); }
+    if (step) { e.preventDefault(); setMacro(key, clamp(m.get() + step, 0, 1)); previewSoon(); }
   });
   knobEls.push({ key, knob, val });
 }
@@ -1155,8 +1173,10 @@ const CTL = {
 Object.keys(CTL).forEach(k => {
   const input = $('#p-' + k);
   input.addEventListener('input', () => { patch[k] = CTL[k].m.from(+input.value); markEdited(); applyPatch(); syncControls(input); });
+  input.addEventListener('change', previewSoon);
 });
 const volIn = $('#p-volume');
+volIn.addEventListener('change', () => previewSoon());
 volIn.addEventListener('input', () => {
   volume = +volIn.value / 1000; store.set('bt_vol', volume);
   if (master) master.gain.setTargetAtTime(volume, ctx.currentTime, 0.02);
@@ -1167,8 +1187,14 @@ const WAVE_ICON = {}; WAVES.forEach(w => { WAVE_ICON[w[0]] = w[2]; });
 WAVES.forEach(([id, label, path]) => {
   const b = document.createElement('button'); b.className = 'wave'; b.dataset.wave = id;
   b.innerHTML = '<svg width="26" height="16" viewBox="0 0 24 18" aria-hidden="true"><path d="' + path + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>' + label;
-  b.addEventListener('click', () => { patch.wave = id; markEdited(); applyPatch(); syncControls(); });
+  b.addEventListener('click', () => { patch.wave = id; markEdited(); applyPatch(); syncControls(); previewSoon(); });
   $('#waveBtns').appendChild(b);
+});
+const LAYERS = [[0, 'Same'], [-12, 'Octave down'], [12, 'Octave up'], [7, 'Fifth up']];
+LAYERS.forEach(([iv, label]) => {
+  const b = document.createElement('button'); b.className = 'wave layer'; b.dataset.iv = iv; b.textContent = label;
+  b.addEventListener('click', () => { patch.osc2 = iv; markEdited(); applyPatch(); syncControls(); previewSoon(); });
+  $('#layerBtns').appendChild(b);
 });
 function syncControls(skip) {
   Object.keys(CTL).forEach(k => {
@@ -1178,6 +1204,7 @@ function syncControls(skip) {
   });
   volIn.value = Math.round(volume * 1000); $('#o-volume').textContent = Math.round(volume * 100) + '%';
   $$('#waveBtns .wave').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.wave === patch.wave)));
+  $$('#layerBtns .wave').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.iv === (patch.osc2 || 0))));
   const a = 4 + Math.min(1, Math.log(patch.attack / 0.003) / Math.log(667)) * 40;
   const d = a + 6 + Math.min(1, Math.log(patch.decay / 0.02) / Math.log(100)) * 40;
   const sy = 56 - patch.sustain * 50;
@@ -1219,9 +1246,23 @@ function loadPreset(p, silent) {
   applyPatch(); syncControls(); renderPresets();
   if (!silent) previewChord();
 }
-function previewChord() {
-  if (!ctx) return;
-  [0, 4, 7].forEach((s, i) => setTimeout(() => { noteOn(s + 12, true); setTimeout(() => noteOff(s + 12, true), 380); }, i * 60));
+let previewTimer = null;
+function previewPhrase(short) {
+  ensureAudio();
+  const seq = short ? [12, 16, 19] : [12, 16, 19, 24];
+  const step = short ? 110 : 170, len = short ? 260 : 380;
+  seq.forEach((s, i) => setTimeout(() => { noteOn(s, true); setTimeout(() => noteOff(s, true), len); }, i * step));
+  if (!short) setTimeout(() => { [12, 16, 19].forEach(s => { noteOn(s, true); setTimeout(() => noteOff(s, true), 800); }); }, seq.length * step + 120);
+}
+function previewSoon() {
+  if ($('#soundSheet').hidden) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => { if (voices.size === 0) previewPhrase(true); }, 250);
+}
+function previewChord() { previewPhrase(true); }
+function placeSoundSheet() {
+  const kb = $('.kb-wrap').getBoundingClientRect();
+  $('#soundSheet').style.setProperty('--sheet-bottom', Math.max(0, window.innerHeight - kb.top + 6) + 'px');
 }
 $('#resetPreset').addEventListener('click', () => loadPreset(basePreset || PRESETS[0]));
 $('#savePreset').addEventListener('click', () => { $('#presetNameRow').hidden = false; $('#presetNameIn').value = ''; $('#presetNameIn').focus(); });
@@ -1243,7 +1284,8 @@ $$('.backdrop').forEach(b => {
   b.addEventListener('click', e => { if (e.target === b) closeSheets(); });
   b.querySelector('[data-close]').addEventListener('click', closeSheets);
 });
-$('#openSound').addEventListener('click', () => { renderPresets(); syncControls(); openSheet('#soundSheet'); });
+$('#openSound').addEventListener('click', () => { renderPresets(); syncControls(); placeSoundSheet(); openSheet('#soundSheet'); });
+$('#hearSound').addEventListener('click', () => previewPhrase(false));
 
 let toastTimer = null;
 function toast(msg, action, fn) {
@@ -1891,7 +1933,7 @@ function frame(now) {
 /* =========================================================
    BOOT
    ========================================================= */
-window.addEventListener('resize', () => { layoutKeyboard(); sizeCanvases(); });
+window.addEventListener('resize', () => { layoutKeyboard(); sizeCanvases(); if (!$('#soundSheet').hidden) placeSoundSheet(); });
 if (window.ResizeObserver) new ResizeObserver(() => { rectsDirty = true; }).observe($('.kb-wrap'));
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { learnPause(); allNotesOff(); }
