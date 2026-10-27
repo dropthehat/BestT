@@ -737,14 +737,64 @@ const SONGS = [
   { id: 'greensleeves', title: 'Greensleeves', by: 'Traditional', diff: 'medium', bpm: 108, preset: 'pluck', notes: S(GREEN_V + ' ' + GREEN_C) },
   { id: 'grace', title: 'Amazing Grace', by: 'Traditional · two verses', diff: 'medium', bpm: 84, preset: 'warmpad', notes: S(GRACE + ' r/1 ' + GRACE) },
   { id: 'gymno', title: 'Gymnopédie No. 1', by: 'Satie (opening)', diff: 'medium', bpm: 84, preset: 'piano', notes: S('r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/3 C#4/3 r/1 C#5/1 E5/1 D5/1 C#5/1 G#4/1 F#4/1 G#4/1 A4/1 E4/6') },
-  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala (riff)', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 }),
-    notes: fromMs([[1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520], [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 600]]) },
-  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala (hook)', diff: 'medium', bpm: 120, patch: tame({ wave: 'square', detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 }),
-    notes: fromMs([[13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450], [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 550]]) },
-  { id: 'borderline', title: 'Borderline', by: 'Tame Impala (lead)', diff: 'medium', bpm: 120, patch: tame({ wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 }),
-    notes: fromMs([[9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420], [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 550]]) },
-  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala (hook)', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }),
-    notes: fromMs([[14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450], [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 650]]) },
+  { id: 'lessiknow', title: 'The Less I Know The Better', by: 'Tame Impala · full riff & verse', diff: 'medium', bpm: 117, patch: tame({ wave: 'sawtooth', detune: 14, cutoff: 1900, reso: 4.2, delayMix: 0.25 }),
+    notes: fromMs([
+      // Main bass/clav riff (Pass 1)
+      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
+      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
+      // Main bass/clav riff (Pass 2)
+      [1, 260], [1, 260], [4, 260], [6, 260], [8, 380], [6, 260], [4, 520],
+      [11, 260], [13, 380], [11, 260], [8, 260], [6, 380], [4, 260], [1, 550],
+      // Verse vocal melody ("Someone said they left together...")
+      [8, 300], [8, 300], [6, 300], [4, 300], [6, 420], [4, 300], [1, 520],
+      [8, 300], [11, 300], [8, 300], [6, 300], [4, 420], [6, 300], [4, 650]
+    ]) },
+  { id: 'letithappen', title: 'Let It Happen', by: 'Tame Impala · extended hook', diff: 'medium', bpm: 125, patch: tame({ wave: 'square', detune: 18, cutoff: 3400, reso: 2.8, delayMix: 0.38 }),
+    notes: fromMs([
+      // Hook phrase 1
+      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
+      [9, 220], [11, 220], [13, 330], [11, 220], [9, 220], [8, 330], [6, 520],
+      // Hook phrase 2
+      [13, 220], [13, 220], [14, 220], [13, 220], [11, 330], [9, 330], [6, 450],
+      [9, 220], [11, 220], [13, 330], [14, 220], [13, 220], [11, 330], [9, 520],
+      // Synth outro climb
+      [6, 240], [9, 240], [11, 240], [13, 360], [16, 360], [14, 240], [13, 240], [11, 360], [9, 240], [8, 240], [6, 650]
+    ]) },
+  { id: 'borderline', title: 'Borderline', by: 'Tame Impala · full lead & chorus', diff: 'medium', bpm: 118, patch: tame({ wave: 'triangle', detune: 12, cutoff: 2600, reso: 2.0, delayMix: 0.42 }),
+    notes: fromMs([
+      // Main flute/synth lead (Pass 1)
+      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
+      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
+      // Main flute/synth lead (Pass 2)
+      [9, 280], [12, 280], [14, 280], [16, 420], [14, 280], [12, 280], [9, 420],
+      [7, 280], [9, 280], [12, 380], [11, 280], [9, 280], [7, 380], [4, 520],
+      // Chorus ("Gone a little far this time...")
+      [12, 320], [11, 320], [9, 320], [7, 450], [9, 320], [12, 320], [14, 480],
+      [16, 320], [14, 320], [12, 320], [11, 320], [9, 650]
+    ]) },
+  { id: 'feelslike', title: 'Feels Like We Only Go Backwards', by: 'Tame Impala · chorus & verse', diff: 'medium', bpm: 120, patch: tame({ wave: 'sawtooth', detune: 24, cutoff: 2200, reso: 3.5, delayMix: 0.48 }),
+    notes: fromMs([
+      // Chorus Pass 1 ("It feels like I only go backwards baby...")
+      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
+      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 350], [2, 600],
+      // Chorus Pass 2
+      [14, 400], [12, 350], [11, 350], [9, 350], [7, 450], [4, 450],
+      [5, 300], [7, 300], [9, 350], [11, 300], [9, 350], [7, 350], [7, 600],
+      // Verse turnaround ("Every part of me says go ahead...")
+      [7, 300], [9, 300], [11, 350], [12, 350], [11, 300], [9, 300], [7, 450],
+      [5, 300], [7, 300], [9, 350], [7, 300], [5, 350], [4, 650]
+    ]) },
+  { id: 'dracula', title: 'Dracula', by: 'Tame Impala · psych synth theme', diff: 'medium', bpm: 122, patch: tame({ wave: 'sawtooth', detune: 22, cutoff: 2100, reso: 4.8, delayMix: 0.44, lfoDepth: 14, lfoRate: 5.2 }),
+    notes: S(
+      // Phrase 1: Chromatic vampire hook in D minor / harmonic minor
+      'D4/.5 F4/.5 A4/.5 Bb4/1 A4/.5 G#4/.5 A4/1 F4/.5 D4/1.5 ' +
+      'D4/.5 F4/.5 A4/.5 C5/1 Bb4/.5 A4/.5 G4/1 E4/.5 C#4/1.5 ' +
+      // Phrase 2: Octave jump & eerie descent
+      'D4/.5 F4/.5 A4/.5 D5/1 C#5/.5 C5/.5 B4/.5 Bb4/.5 A4/1 F4/.5 D4/1 ' +
+      'G4/.5 A4/.5 Bb4/1 A4/.5 G4/.5 F4/.5 E4/.5 F4/.5 G4/.5 A4/2 ' +
+      // Phrase 3: Driving hypnotic synth bridge
+      'A4/.5 A4/.5 Bb4/.5 A4/.5 G4/.5 F4/.5 E4/.5 C#4/.5 D4/.5 F4/.5 A4/.5 C#5/.5 D5/2'
+    ) },
 
   { id: 'elise', title: 'Für Elise', by: 'Beethoven · theme twice', diff: 'hard', bpm: 138, preset: 'piano', notes: S(ELISE + ' ' + ELISE) },
   { id: 'mountain', title: 'In the Hall of the Mountain King', by: 'Grieg', diff: 'hard', bpm: 150, preset: 'bass', notes: S(MK + ' ' + MK + ' ' + MK) },
