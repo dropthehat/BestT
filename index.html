@@ -228,7 +228,10 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 /* Beats */
 .panel-beats { display: flex; flex-direction: column; gap: 10px; overflow: auto; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.beat-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.beat-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; position: sticky; top: 0; z-index: 2; background: var(--chassis); padding-bottom: 4px; }
+.beat-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
+.beat-chips::-webkit-scrollbar { display: none; }
+.beat-chips .pill { flex: none; }
 .beat-top input[type="range"] { flex: 1; min-width: 120px; }
 .grid-rows { display: flex; flex-direction: column; gap: 6px; }
 .grid-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 8px; }
@@ -543,13 +546,13 @@ input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--
 
     <!-- BEATS -->
     <section class="panel panel-beats" data-panel="beats" hidden>
-      <div class="chips" id="beatChips"></div>
       <div class="beat-top">
         <button class="play-btn" id="beatPlay" aria-label="Play beat"></button>
         <div class="bpm"><b id="bpmBig">85</b><small>BPM</small></div>
         <input type="range" id="bpmRange" min="60" max="180" step="1" value="85" aria-label="Tempo">
         <button class="btn" id="beatReset">Reset pattern</button>
       </div>
+      <div class="chips beat-chips" id="beatChips"></div>
       <div class="grid-rows" id="beatGrid"></div>
       <label class="ctl" style="max-width:320px"><span>Drum volume <output id="drumVolOut">80%</output></span><input type="range" id="drumVol" min="0" max="100" value="80"></label>
     </section>
@@ -1473,6 +1476,8 @@ function renderBeat() {
     b.addEventListener('click', () => { loadBeat(id); });
     chips.appendChild(b);
   });
+  const on = chips.querySelector('[aria-pressed="true"]');
+  if (on) requestAnimationFrame(() => { chips.scrollLeft = Math.max(0, on.offsetLeft - chips.offsetLeft - 8); });
   const g = $('#beatGrid'); g.innerHTML = '';
   ROWS.forEach(([r, label]) => {
     const row = document.createElement('div'); row.className = 'grid-row';
