@@ -494,6 +494,17 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 .cell[aria-pressed="true"] { background: var(--accent); box-shadow: none; }
 .cell.now { outline: 2px solid var(--accent2); outline-offset: -2px; }
 :root[data-skin="neon"] .cell[aria-pressed="true"] { background: var(--accent); box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.35); }
+/* v2.3: each beat (4 steps) sits in its own tinted block with a clear gap between beats */
+.cells.grouped { grid-template-columns: repeat(var(--g, 4), minmax(0, 1fr)); gap: 8px; }
+.cell-group { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; padding: 3px; border-radius: 9px; min-height: 0; background: color-mix(in srgb, var(--text) 7%, transparent); }
+.cell-group.alt { background: color-mix(in srgb, var(--accent2) 18%, transparent); }
+.cell-group .cell, .cell-group .cell.alt { background: var(--panel); }
+.cell-group .cell.b1 { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--text) 38%, transparent); }
+.cell-group .cell[aria-pressed="true"] { background: var(--accent); box-shadow: none; }
+.beat-nums { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: -4px; }
+.beat-nums .cells { min-height: 0; }
+.beat-nums .cells span { padding-left: 5px; }
+.btn.toggle-btn[aria-pressed="true"] { background: var(--accent2); color: var(--on-accent2); border-color: transparent; }
 
 /* ---- Sound panel: lives inside .app, covers everything above the keyboard ---- */
 .app > .sound-panel { position: absolute; z-index: 20; inset: 0 0 auto 0; bottom: calc(var(--pad) + var(--kb-h) + var(--gap) / 2); padding: 0; background: transparent; display: block; }
@@ -572,6 +583,8 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
   .grid-row { grid-template-columns: 40px minmax(0, 1fr); gap: 4px; }
   .row-lbl { font-size: 11px; }
   .cells { gap: 2px; } .cell { border-radius: 5px; }
+  .cells.grouped { gap: 5px; } .cell-group { gap: 2px; padding: 2px; border-radius: 7px; }
+  .beat-nums { grid-template-columns: 40px minmax(0, 1fr); gap: 4px; }
   .sound-panel .sheet { padding: 6px 8px; gap: 6px; border-radius: 14px 14px 10px 10px; }
   .sp-head { gap: 10px; }
   .sp-title h2 { font-size: 16px; } .sp-title .label { display: none; }
@@ -701,7 +714,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
       </div>
       <div class="logo logo-neon"><span class="neon-name">Best T</span><span class="neon-sub">POLY SYNTH</span></div>
       <div class="logo logo-plate"><span class="screw a"></span><span class="screw b"></span><span class="screw c"></span><span class="screw d"></span><span class="plate-name">BEST T</span><span class="plate-sub">MODEL BT-1</span></div>
-      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.2</span></div>
+      <div class="logo logo-studio"><span class="st-name">best t</span><span class="st-model app-ver">v2.3</span></div>
     </div>
 
     <nav class="tabs" role="tablist" aria-label="Mode">
@@ -799,6 +812,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
             <button data-mode="wait" aria-pressed="true">Wait for me</button>
             <button data-mode="timed" aria-pressed="false">In time</button>
           </div>
+          <button class="btn toggle-btn" id="backingBtn" aria-pressed="true" title="Drums, bass and chords play along in In time mode and Listen">Backing</button>
           <button class="btn" id="speedBtn">100%</button>
           <button class="btn" id="demoBtn">Listen</button>
           <button class="btn primary" id="startBtn">Start</button>
@@ -836,8 +850,10 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
           <input type="range" id="bpmRange" min="60" max="180" step="1" value="85" aria-label="Tempo">
           <div class="beat-title"><b id="beatTitle">Lo-Fi Chill</b><small id="beatKit">Dusty tape kit</small></div>
           <label class="drum-vol"><span>Drums <output id="drumVolOut">80%</output></span><input type="range" id="drumVol" min="0" max="100" value="80" aria-label="Drum volume"></label>
-          <button class="btn" id="beatReset">Reset</button>
+          <button class="btn" id="beatClear" title="Empty every step to build your own beat">Clear</button>
+          <button class="btn" id="beatReset" title="Back to this style's original pattern">Reset</button>
         </div>
+        <div class="beat-nums" id="beatNums" aria-hidden="true"></div>
         <div class="grid-rows" id="beatGrid"></div>
       </div>
     </section>
@@ -954,7 +970,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="skinSheetTitle" style="max-width:760px">
     <div class="sheet-head"><h2 id="skinSheetTitle">Skins</h2><button class="btn" data-close>Close</button></div>
     <div class="skins" id="skinList"></div>
-    <p class="note">Best T <span class="app-ver">v2.2</span></p>
+    <p class="note">Best T <span class="app-ver">v2.3</span></p>
   </div>
 </div>
 
@@ -963,7 +979,7 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '2.2';
+const APP_VERSION = '2.3';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -1239,6 +1255,52 @@ const SONGS = [
     patch: customPatch('drive', 'Outrun Pluck Arp', { wave: 'sawtooth', detune: 22, cutoff: 4600, reso: 3.2, attack: 0.005, decay: 0.2, sustain: 0.25, release: 0.2, delayMix: 0.42, delayTime: 0.23, feedback: 0.48, lfoDepth: 5, lfoRate: 6 }),
     notes: fromSemis(ARP, 0.5, 2) }
 ];
+// Backing parts: single notes "C#2/2" or chords "F#2+A3+C#4/2"; the first note of each chord is the bass.
+function B(str) {
+  const out = []; let t = 0;
+  str.trim().split(/\s+/).forEach(tok => {
+    const [part, d] = tok.split('/'); const dur = parseFloat(d);
+    if (!(dur > 0)) return;
+    if (part !== 'r') part.split('+').forEach((n, i) => { const s = semiOf(n); if (s !== null) out.push({ s, t, d: dur, bass: i === 0 }); });
+    t += dur;
+  });
+  return { notes: out, loop: t };
+}
+SONGS.push({
+  id: 'halloween', title: 'Halloween Theme', by: 'John Carpenter · 5/4 ostinato', diff: 'hard', bpm: 152,
+  patch: customPatch('drive', 'Prophet-5 Staccato Lead', { wave: 'sawtooth', osc2: -12, osc2Wave: 'square', detune: 14, cutoff: 3400, reso: 3.2, attack: 0.003, decay: 0.16, sustain: 0.2, release: 0.14, delayMix: 0.35, delayTime: 0.19, feedback: 0.42, lfoDepth: 4, lfoRate: 6 }),
+  notes: S(
+    'C#5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/.5 D5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/.5 ' +
+    'C#5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/.5 D5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/.5 ' +
+    'C5/.5 F4/.5 F4/.5 C5/.5 F4/.5 C#5/.5 F4/.5 F4/.5 C5/.5 F4/.5 ' +
+    'C5/.5 F4/.5 F4/.5 C5/.5 F4/.5 C#5/.5 F4/.5 F4/.5 C5/.5 F4/.5 ' +
+    'B4/.5 E4/.5 E4/.5 B4/.5 E4/.5 C5/.5 E4/.5 E4/.5 B4/.5 E4/.5 ' +
+    'B4/.5 E4/.5 E4/.5 B4/.5 E4/.5 C5/.5 E4/.5 E4/.5 B4/.5 E4/.5 ' +
+    'C#5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/.5 D5/.5 F#4/.5 F#4/.5 C#5/.5 F#4/2.5'
+  )
+});
+const SONG_BACKINGS = {
+  lessiknow: { beat: 'disco', bassWave: 'sawtooth', backing: B('C#2+G#3+C#4+E4/4 B1+F#3+B3+D#4/4 E2+G#3+B3/2 F#2+A3+C#4/2 A2+E3+A3+C#4/2 B2+F#3+B3+D#4/2') },
+  dracula: { beat: 'disco', bassWave: 'sawtooth', backing: B('E2+B3+E4/2 G2+B3+D4/2 D2+A3+D4/2 A2+C#4+E4/2 C2+G3+C4/2 B1+F#3+B3+D#4/2 E2+B3+E4/4') },
+  letithappen: { beat: 'synthwave', bassWave: 'sawtooth', backing: B('A2+E3+A3+C#4/4 F#2+C#3+F#3+A3/4 G#2+D#3+G#3+B3/4 C#2+G#3+C#4+E4/4') },
+  borderline: { beat: 'house', bassWave: 'triangle', backing: B('G2+D3+G3+Bb3/4 F2+C3+F3+A3/4 Eb2+Bb2+Eb3+G3/4 D2+A2+D3+F3/4') },
+  feelslike: { beat: 'lofi', bassWave: 'sawtooth', backing: B('F2+C3+F3+A3/2 C2+G2+C3+E3/2 Bb1+F2+Bb2+D3/4 G2+D3+G3+Bb3/2 A2+E3+A3+C3/2 D2+A2+D3+F3/4') },
+  billiejean: { beat: 'disco', bassWave: 'sawtooth', backing: B(
+    'F#2+A3+C#4/.5 C#2/.5 E2/.5 F#2+G#3+B3/.5 E2/.5 C#2/.5 B1/.5 C#2/.5 ' +
+    'F#2+A3+C#4/.5 C#2/.5 E2/.5 F#2+A3+D4/.5 E2/.5 C#2/.5 B1/.5 C#2/.5') },
+  beatit: { beat: 'rock', bassWave: 'sawtooth', backing: B('E2+B2+E3/2 D2+A2+D3/2 C2+G2+C3/2 D2+A2+D3/2 E2+B2+E3/2 D2+A2+D3/2 C2+G2+C3/2 B1+F#2+B2/2') },
+  smoothcriminal: { beat: 'synthwave', bassWave: 'sawtooth', backing: B('A2+E3+A3/2 G2+D3+G3/2 F2+C3+F3/2 G2+D3+G3/1 E2+B2+E3/1') },
+  thriller: { beat: 'disco', bassWave: 'sawtooth', backing: B('C#2+G#2+C#3/1.5 F#2+C#3+F#3/1.5 A2+E3+A3/1 B1+F#2+B2/2 C#2+G#2+C#3/2') },
+  halloween: { beat: 'synthwave', bassWave: 'sawtooth', backing: B('F#1+F#2/5 F#1+F#2/5 F1+F2/5 F1+F2/5 E1+E2/5 E1+E2/5 F#1+F#2/5') },
+  twinkle: { beat: 'lofi', bassWave: 'triangle', backing: B('C3+E3+G3/2 C3+E3+G3/2 F3+A3+C4/2 C3+E3+G3/2 F3+A3+C4/2 C3+E3+G3/2 G2+D3+G3/2 C3+E3+G3/2') },
+  ode: { beat: 'lofi', bassWave: 'triangle', backing: B('F2+C3+A3/4 C3+E3+G3/4 D3+F3+A3/4 C3+E3+G3/4') },
+  greensleeves: { beat: 'waltz', bassWave: 'triangle', backing: B('A2+E3+A3/3 G2+D3+G3/3 F2+C3+F3/3 E2+B2+G#3/3') },
+  elise: { beat: 'waltz', bassWave: 'triangle', backing: B('r/1 A2+E3+A3/3 E2+E3+G#3/3 A2+E3+A3/3') },
+  mountain: { beat: 'rock', bassWave: 'square', backing: B('A2+E3/1 E2+B2/1 A2+E3/1 E2+B2/1 A2+E3/1 B2+F#3/1 E2+B2/2') },
+  canon: { beat: 'lofi', bassWave: 'triangle', backing: B('D2+A2+F#3/2 A1+E2+C#3/2 B1+F#2+D3/2 F#1+C#2+A2/2 G1+D2+B2/2 D1+A1+F#2/2 G1+D2+B2/2 A1+E2+C#3/2') },
+  arp: { beat: 'synthwave', bassWave: 'sawtooth', backing: B('C2+C3/4 F2+F3/4 C2+C3/4 F2+F3/4 D2+D3/4 G2+G3/4 C2+C3/4') }
+};
+SONGS.forEach(sg => { if (SONG_BACKINGS[sg.id]) Object.assign(sg, SONG_BACKINGS[sg.id]); });
 let mySongs = store.get('bt_mysongs', []);
 const allSongs = () => SONGS.concat(mySongs);
 let best = store.get('bt_best', {});
@@ -1341,6 +1403,23 @@ function releaseVoice(semi, fast) {
   setKey(semi, false); jam();
 }
 function allNotesOff() { Array.from(voices.keys()).forEach(s => releaseVoice(s, 0.05)); }
+// Backing-track voice: its own filtered oscillator straight into master, so it never lights keys or steals player voices.
+// Pitched from a fixed octave 4 so the player's octave buttons don't move the backing.
+function playAccompVoice(semi, durSec, wave, isBass) {
+  if (!ctx || durSec <= 0) return;
+  const now = ctx.currentTime, f = 440 * Math.pow(2, ((4 + 1) * 12 + semi - 69) / 12);
+  const o = ctx.createOscillator(), flt = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = wave || 'sawtooth'; o.frequency.setValueAtTime(f, now);
+  flt.type = 'lowpass'; flt.frequency.setValueAtTime(isBass ? 520 : 1150, now); flt.Q.value = 1.4;
+  const peak = isBass ? 0.15 : 0.055;
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.linearRampToValueAtTime(peak, now + 0.015);
+  g.gain.setTargetAtTime(peak * 0.55, now + 0.02, Math.max(0.04, durSec * 0.35));
+  g.gain.setTargetAtTime(0.0001, now + durSec * 0.85, 0.06);
+  o.connect(flt); flt.connect(g); g.connect(master);
+  o.start(now); o.stop(now + durSec + 0.3);
+  o.onended = () => { try { g.disconnect(); } catch (e) {} };
+}
 function jam() { app.classList.toggle('jamming', voices.size > 0 || beat.playing); notesLabelDirty = true; }
 
 /* drums */
@@ -1520,6 +1599,37 @@ kbEl.addEventListener('pointermove', e => {
 const endPtr = e => { if (!pointers.has(e.pointerId)) return; const s = pointers.get(e.pointerId); pointers.delete(e.pointerId); if (s !== null) release(s); };
 kbEl.addEventListener('pointerup', endPtr); kbEl.addEventListener('pointercancel', endPtr);
 kbEl.addEventListener('contextmenu', e => e.preventDefault());
+
+// iOS Safari never fires `click` for a tap made while another finger is down (e.g. holding a key),
+// so buttons like beat Play, Sustain or Oct ignored you mid-chord. Re-fire those taps ourselves.
+(function multiTouchTaps() {
+  const active = new Set(), starts = new Map();
+  let synthEl = null, synthAt = 0;
+  document.addEventListener('pointerdown', e => {
+    synthEl = null;   // a new touch means any late native click from the last tap has already come and gone
+    if (e.pointerType !== 'touch') return;
+    active.add(e.pointerId);
+    const b = e.target.closest && e.target.closest('button, [role="button"]');
+    starts.set(e.pointerId, { b, multi: active.size > 1, x: e.clientX, y: e.clientY });
+  }, true);
+  const end = e => {
+    if (e.pointerType !== 'touch') return;
+    const st = starts.get(e.pointerId); starts.delete(e.pointerId);
+    const multi = st && (st.multi || active.size > 1); active.delete(e.pointerId);
+    if (e.type !== 'pointerup' || !st || !st.b || !multi || st.b.disabled || kbEl.contains(st.b)) return;
+    if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 14) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el || !st.b.contains(el)) return;
+    synthEl = st.b; synthAt = performance.now(); st.b.click();
+  };
+  document.addEventListener('pointerup', end, true);
+  document.addEventListener('pointercancel', end, true);
+  document.addEventListener('click', e => {   // swallow the real click if iOS does send one after ours
+    if (!synthEl || !e.isTrusted) return;
+    if (performance.now() - synthAt < 700 && synthEl.contains(e.target)) { e.preventDefault(); e.stopImmediatePropagation(); }
+    synthEl = null;
+  }, true);
+})();
 
 const downKeys = new Set();
 window.addEventListener('keydown', e => {
@@ -2088,18 +2198,25 @@ function renderBeat() {
   $('#beatTitle').textContent = BEATS[beat.id].name;
   $('#beatKit').textContent = (KITS[beat.id] || KITS.lofi).name + ' · ' + beat.steps + ' steps';
   const g = $('#beatGrid'); g.innerHTML = '';
+  const groups = Math.ceil(beat.steps / 4);
+  const nums = $('#beatNums'); nums.innerHTML = '<span></span>';
+  const numCells = document.createElement('div'); numCells.className = 'cells grouped'; numCells.style.setProperty('--g', groups);
+  for (let q = 0; q < groups; q++) { const sp = document.createElement('span'); sp.textContent = q + 1; numCells.appendChild(sp); }
+  nums.appendChild(numCells);
   ROWS.forEach(([r, label]) => {
     const row = document.createElement('div'); row.className = 'grid-row';
     const l = document.createElement('span'); l.className = 'row-lbl row-' + r; l.textContent = label; row.appendChild(l);
-    const cells = document.createElement('div'); cells.className = 'cells'; cells.style.setProperty('--n', beat.steps);
+    const cells = document.createElement('div'); cells.className = 'cells grouped'; cells.style.setProperty('--g', groups);
+    let grp = null;
     for (let i = 0; i < beat.steps; i++) {
-      const c = document.createElement('button'); c.className = 'cell' + (i % 4 === 0 ? ' b1' : '') + (Math.floor(i / 4) % 2 ? ' alt' : ''); c.dataset.i = i;
+      if (i % 4 === 0) { grp = document.createElement('div'); grp.className = 'cell-group' + ((i / 4) % 2 ? ' alt' : ''); cells.appendChild(grp); }
+      const c = document.createElement('button'); c.className = 'cell' + (i % 4 === 0 ? ' b1' : ''); c.dataset.i = i;
       c.setAttribute('aria-label', label + ' step ' + (i + 1)); c.setAttribute('aria-pressed', String(!!beat.grid[r][i]));
       c.addEventListener('click', () => {
         beat.grid[r][i] = !beat.grid[r][i]; c.setAttribute('aria-pressed', String(beat.grid[r][i]));
         beatEdits[beat.id] = beat.grid; store.set('bt_beats', beatEdits);
       });
-      cells.appendChild(c);
+      grp.appendChild(c);
     }
     row.appendChild(cells); g.appendChild(row);
   });
@@ -2115,6 +2232,12 @@ $('#beatNameBtn').addEventListener('click', () => setTab('beats'));
 $$('[data-bpm]').forEach(b => b.addEventListener('click', () => setBpm(beat.bpm + parseInt(b.dataset.bpm, 10))));
 $('#bpmRange').addEventListener('input', e => setBpm(+e.target.value));
 $('#beatReset').addEventListener('click', () => { delete beatEdits[beat.id]; store.set('bt_beats', beatEdits); loadBeat(beat.id); });
+$('#beatClear').addEventListener('click', () => {
+  const prev = JSON.parse(JSON.stringify(beat.grid));
+  ROWS.forEach(([r]) => { beat.grid[r] = beat.grid[r].map(() => false); });
+  beatEdits[beat.id] = beat.grid; store.set('bt_beats', beatEdits); renderBeat();
+  toast('Grid cleared', 'Undo', () => { beat.grid = prev; beatEdits[beat.id] = prev; store.set('bt_beats', beatEdits); renderBeat(); });
+});
 $('#drumVol').value = Math.round(drumVol * 100); $('#drumVolOut').textContent = Math.round(drumVol * 100) + '%';
 $('#drumVol').addEventListener('input', e => {
   drumVol = +e.target.value / 100; store.set('bt_drumvol', drumVol);
@@ -2250,7 +2373,7 @@ $('#takeDelete').addEventListener('click', () => {
    LEARN MODE
    ========================================================= */
 const LEAD = 2.0, WIN = 0.22, PERFECT = 0.09;
-const L = { song: null, notes: [], mode: 'wait', speed: 1, state: 'idle', t: -LEAD, last: 0, demo: false, score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, end: 0, fx: [], undo: null, prevSound: null };
+const L = { song: null, notes: [], mode: 'wait', backing: store.get('bt_backing', true), speed: 1, state: 'idle', t: -LEAD, last: 0, demo: false, score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, end: 0, fx: [], undo: null, prevSound: null };
 // Keep every Learn note on the 2-octave keyboard (semis 0..24) by shifting whole octaves,
 // so a note below the lowest C or above the top C can never stall Wait mode off-screen.
 const foldSemi = s => { while (s < 0) s += 12; while (s > 24) s -= 12; return s; };
@@ -2292,7 +2415,14 @@ function selectSong(song, quiet) {
   resetLearn();
 }
 const diffName = d => (DIFFS.find(x => x[0] === d) || ['', 'Mine'])[1];
-function setMode(m) { L.mode = m; $$('.learn-ctrls .seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); }
+function setMode(m) { L.mode = m; $$('.learn-ctrls .seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); renderBackingBtn(); }
+function renderBackingBtn() {
+  const b = $('#backingBtn'); if (!b) return;
+  b.setAttribute('aria-pressed', String(L.backing));
+  b.style.opacity = L.mode === 'timed' ? '1' : '0.55';   // only plays in In time mode and Listen
+}
+$('#backingBtn').addEventListener('click', () => { L.backing = !L.backing; store.set('bt_backing', L.backing); renderBackingBtn(); toast(L.backing ? 'Backing on' : 'Backing off'); });
+renderBackingBtn();
 $$('.learn-ctrls .seg button').forEach(b => b.addEventListener('click', () => { setMode(b.dataset.mode); if (L.state !== 'idle') resetLearn(); }));
 const SPEEDS = [1, 0.75, 0.5];
 $('#speedBtn').addEventListener('click', () => {
@@ -2347,9 +2477,39 @@ function learnPress(semi) {
   if (bestN && bestD <= WIN) judge(bestN, bestD);
   else if (L.combo > 0) { L.combo = 0; addFx('Oops', semi, colors['--bad']); }
 }
+// Drums + bass/chords locked to the Learn clock (song seconds). Fires everything whose time falls in [prevT, nt).
+function learnBackingTick(prevT, nt) {
+  if (!L.backing || !L.song || !ctx || nt <= prevT) return;
+  if (L.mode !== 'timed' && !L.demo) return;
+  const beatSec = 60 / (L.song.bpm || 100), stepSec = beatSec / 4;
+  if (!beat.playing) {   // the player's own beat wins if it's already running
+    const pat = BEATS[L.song.beat] || BEATS.lofi, songKit = KITS[L.song.beat] || KITS.lofi;
+    for (let st = Math.ceil(prevT / stepSec - 1e-9); st * stepSec < nt; st++) {
+      const at = st * stepSec;
+      if (at < 0) { if (at >= -beatSec * 4 && st % 4 === 0) hat(ctx.currentTime); continue; }   // count-in clicks
+      if (at > L.end + beatSec) break;
+      const i = st % pat.steps, saved = kit; kit = songKit;
+      if (pat.k[i] === '1') kick(ctx.currentTime);
+      if (pat.s[i] === '1') snare(ctx.currentTime);
+      if (pat.h[i] === '1') hat(ctx.currentTime);
+      kit = saved;
+    }
+  }
+  const bk = L.song.backing;
+  if (!bk || !(bk.loop > 0)) return;
+  const a = prevT / beatSec, b = Math.min(nt, L.end) / beatSec;
+  if (b <= Math.max(0, a)) return;
+  for (let k = Math.max(0, Math.floor(a / bk.loop)); k * bk.loop < b; k++) {
+    bk.notes.forEach(bn => {
+      const at = k * bk.loop + bn.t;
+      if (at >= a && at < b) playAccompVoice(bn.s, bn.d * beatSec / L.speed, L.song.bassWave, bn.bass);
+    });
+  }
+}
 function learnUpdate(now) {
   if (L.state !== 'playing') return;
   const dt = Math.min(0.1, (now - L.last) / 1000) * L.speed; L.last = now;
+  const prevT = L.t;
   let nt = L.t + dt;
   if (L.demo) {
     L.notes.forEach(n => {
@@ -2364,6 +2524,7 @@ function learnUpdate(now) {
       if (n.state === 0 && nt - n.t > WIN) { n.state = 2; L.miss++; L.combo = 0; addFx('Miss', n.s, colors['--bad']); }
     });
   }
+  learnBackingTick(prevT, nt);
   L.t = nt;
   updateGuide();
   if (!L.notes.some(n => n.state === 0) && L.t > L.end + 0.6) learnFinish();
