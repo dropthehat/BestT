@@ -2251,9 +2251,12 @@ $('#takeDelete').addEventListener('click', () => {
    ========================================================= */
 const LEAD = 2.0, WIN = 0.22, PERFECT = 0.09;
 const L = { song: null, notes: [], mode: 'wait', speed: 1, state: 'idle', t: -LEAD, last: 0, demo: false, score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, end: 0, fx: [], undo: null, prevSound: null };
+// Keep every Learn note on the 2-octave keyboard (semis 0..24) by shifting whole octaves,
+// so a note below the lowest C or above the top C can never stall Wait mode off-screen.
+const foldSemi = s => { while (s < 0) s += 12; while (s > 24) s -= 12; return s; };
 function secNotes(song) {
   const k = 60 / song.bpm;
-  return song.notes.map(n => ({ s: n.s, t: n.t * k, d: Math.max(0.1, n.d * k), state: 0, on: false, off: 0 }));
+  return song.notes.map(n => ({ s: foldSemi(n.s), t: n.t * k, d: Math.max(0.1, n.d * k), state: 0, on: false, off: 0 }));
 }
 function resetLearn() {
   L.notes = L.song ? secNotes(L.song) : [];
@@ -2275,7 +2278,7 @@ function selectSong(song, quiet) {
   $('#songTitle').textContent = song.title;
   const snd = songSound(song);
   $('#songMeta').textContent = diffName(song.diff) + ' · ' + song.notes.length + ' notes' + (snd ? ' · ' + snd.base.name : '');
-  fitWindow(song.notes);
+  fitWindow(song.notes.map(n => ({ s: foldSemi(n.s) })));
   const sp = songSound(song);
   if (sp && !(basePreset && sp.base.id && basePreset.id === sp.base.id && !edited)) {
     const prev = { base: basePreset, patch: pick(patch), edited };
