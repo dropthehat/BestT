@@ -782,13 +782,17 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
       <div class="card beat-card">
         <div class="row">
           <span class="label">Beat</span>
-          <button class="pf-mini" id="beatKitBtn" aria-label="Change drum kit sound" title="Tap to cycle drum kit sound">Dusty tape</button>
           <button class="link-btn" id="openBeats" style="min-height:20px;font-size:12px">Edit →</button>
         </div>
         <div class="sc-name">
           <button class="nav-btn" id="prevBeat" aria-label="Previous beat">‹</button>
           <button class="sound-name" id="beatNameBtn" style="font-size:17px;text-align:center;flex:1" title="Open beat editor">Lo-Fi Chill</button>
           <button class="nav-btn" id="nextBeat" aria-label="Next beat">›</button>
+        </div>
+        <div class="row beat-vol-row" style="gap:8px">
+          <button class="pf-mini" id="beatKitBtn" aria-label="Change drum kit sound" title="Tap to cycle drum kit sound">Dusty tape</button>
+          <input type="range" id="beatVol" min="0" max="100" value="80" aria-label="Beat volume" style="flex:1;min-width:0">
+          <output id="beatVolOut" style="font-size:12px;min-width:34px;text-align:right">80%</output>
         </div>
         <div class="row">
           <div class="row" style="gap:4px">
@@ -2348,9 +2352,18 @@ $('#beatClear').addEventListener('click', () => {
   toast('Grid cleared', 'Undo', () => { beat.grid = prev; beatEdits[beat.id] = prev; store.set('bt_beats', beatEdits); renderBeat(); });
 });
 $('#drumVol').value = Math.round(drumVol * 100); $('#drumVolOut').textContent = Math.round(drumVol * 100) + '%';
+$('#beatVol').value = Math.round(drumVol * 100); $('#beatVolOut').textContent = Math.round(drumVol * 100) + '%';
+const setDrumVolFrom = v => {
+  drumVol = v / 100; store.set('bt_drumvol', drumVol);
+  $('#drumVol').value = v; $('#drumVolOut').textContent = v + '%';
+  $('#beatVol').value = v; $('#beatVolOut').textContent = v + '%';
+  if (drumBus) drumBus.gain.setTargetAtTime(drumVol, ctx ? ctx.currentTime : 0, 0.02);
+};
+$('#beatVol').addEventListener('input', e => setDrumVolFrom(+e.target.value));
 $('#drumVol').addEventListener('input', e => {
   drumVol = +e.target.value / 100; store.set('bt_drumvol', drumVol);
   $('#drumVolOut').textContent = e.target.value + '%';
+  $('#beatVol').value = e.target.value; $('#beatVolOut').textContent = e.target.value + '%';
   if (drumBus) drumBus.gain.setTargetAtTime(drumVol, ctx.currentTime, 0.02);
 });
 
