@@ -790,7 +790,6 @@ button:focus-visible, [role="slider"]:focus-visible, input:focus-visible { outli
           <button class="nav-btn" id="nextBeat" aria-label="Next beat">›</button>
         </div>
         <div class="row beat-vol-row" style="gap:8px">
-          <button class="pf-mini" id="beatKitBtn" aria-label="Change drum kit sound" title="Tap to cycle drum kit sound">Dusty tape</button>
           <input type="range" id="beatVol" min="0" max="100" value="80" aria-label="Beat volume" style="flex:1;min-width:0">
           <output id="beatVolOut" style="font-size:12px;min-width:34px;text-align:right">80%</output>
         </div>
@@ -2258,9 +2257,6 @@ function renderBeatState() {
 }
 function renderBeat() {
   $('#beatNameBtn').textContent = BEATS[beat.id].name; setBpm(beat.bpm);
-  const activeKit = KITS[currentKitId()] || KITS.lofi;
-  const kitBtn = $('#beatKitBtn');
-  if (kitBtn) kitBtn.textContent = activeKit.name.replace(/\s*kit$/i, '');
   const mini = $('#stepsMini'); mini.innerHTML = ''; mini.style.setProperty('--n', beat.steps);
   for (let i = 0; i < beat.steps; i++) { const d = document.createElement('span'); if (i % 4 === 0) d.className = 'beat1'; mini.appendChild(d); }
   const chips = $('#beatChips'); chips.innerHTML = '';
@@ -2281,6 +2277,7 @@ function renderBeat() {
     else chips.scrollLeft = Math.max(0, on.offsetLeft - chips.offsetLeft - 8);
   });
   $('#beatTitle').textContent = BEATS[beat.id].name;
+  const activeKit = KITS[currentKitId()] || KITS.lofi;
   $('#beatKit').textContent = activeKit.name + ' · ' + beat.steps + ' steps';
   const g = $('#beatGrid'); g.innerHTML = '';
   const groups = Math.ceil(beat.steps / 4);
@@ -2324,18 +2321,6 @@ function stepBeat(d) {
 $('#prevBeat').addEventListener('click', () => stepBeat(-1));
 $('#nextBeat').addEventListener('click', () => stepBeat(1));
 
-$('#beatKitBtn').addEventListener('click', () => {
-  ensureAudio();
-  const cur = currentKitId();
-  const nextId = KIT_IDS[(KIT_IDS.indexOf(cur) + 1) % KIT_IDS.length];
-  beatKits[beat.id] = nextId;
-  store.set('bt_beatkits', beatKits);
-  applyKit();
-  renderBeat();
-  // Audition the new kit immediately (kick + snare + hat preview)
-  const now = ctx.currentTime;
-  kick(now); snare(now + 0.12); hat(now + 0.24);
-});
 
 const userBpm = v => { setBpm(v); beatBpms[beat.id] = beat.bpm; store.set('bt_beatbpm', beatBpms); const it = $$('#beatChips .style-item')[Object.keys(BEATS).indexOf(beat.id)]; if (it) it.querySelector('.si-bpm').textContent = beat.bpm; };
 $$('[data-bpm]').forEach(b => b.addEventListener('click', () => userBpm(beat.bpm + parseInt(b.dataset.bpm, 10))));
